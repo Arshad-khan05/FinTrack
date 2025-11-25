@@ -9,13 +9,22 @@
     <form method="post">
         {% csrf_token %}
         <h2>Login</h2>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br><br>
         <button type="submit">Login</button><br>
-        <label for="forgot-password">Forgot Password?</label>
-        <a href="/reset-password">Reset Here</a>
+        <label for="forgot-password">Forgot Username or Password?</label>
+        <a href="/reset-password">Click Here</a><br>
+        <label for="signup">Don't have an account?</label>
+        <a href="/signup">Sign Up</a>
     </form>
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 </body>
 </html>
