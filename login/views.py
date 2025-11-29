@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
+
 # Create your views here.
 def render_homepage(request):
     return render(request, 'index.html')
@@ -52,16 +53,19 @@ def render_signup_page(request):
     return render(request, 'signup.html')
 
 def render_reset_password_page(request):
-
-
+    
     context = {
-        "emailFoundStatus": False,
-        "passwordMatchStatus": False,
-        "displaySignupLink": False,
+        "email": "",
         "emailMessage": "",
-        "passwordMessage": ""
+        "emailFoundStatus": False,
+        "displayEmailFoundMessage": False,
+        "displayEmailnotFoundMessage": False,
+        "passwordMatchStatus": False,
+        "passwordMessage": "",
+        "displayPasswordMatchMessage": False,
+        "displayPasswordNotMatchMessage": False
     }
-
+    
     if request.method == 'POST':
         action = request.POST.get('action')
 
@@ -70,34 +74,38 @@ def render_reset_password_page(request):
             try:
                 user = User.objects.get(email=email)
                 context["email"] = email
-                print(f'Email : {email}')
+                context["emailMessage"] = f"Your username is: {user.username}"
                 context["emailFoundStatus"] = True
-                context["emailMessage"] = f"Your Username is : {user.username}"
+                context["displayEmailFoundMessage"] = True
             except User.DoesNotExist:
-                context["emailFoundStatus"] = False
-                context["displaySignupLink"] = True
+                print("Email not found")
                 context["emailMessage"] = "Email not found"
+                context["emailFoundStatus"] = False
+                context["displayEmailnotFoundMessage"] = True
 
-        elif action == 'reset':
+        if action == 'reset':
             email = request.POST.get('email')
             password = request.POST.get('password')
             confirm_password = request.POST.get('confirm_password')
+            print(f'Email: {email}')
             print(f'Password: {password}, Confirm Password: {confirm_password}')
-            try:
-                user = User.objects.get(email=email)
-                if password and password == confirm_password:
-                    user.set_password(password)
-                    user.save()
-                    context["emailFoundStatus"] = True
-                    context["passwordMatchStatus"] = True
-                    context["passwordMessage"] = "Password reset successfully"
-                else:
-                    context["emailFoundStatus"] = True
-                    context["passwordMatchStatus"] = False
-                    context["passwordMessage"] = "Passwords do not match"
-            except User.DoesNotExist:
-                context["emailFoundStatus"] = False
-                context["displaySignupLink"] = True
-                context["emailMessage"] = "Email not found"
-
+            
+            user = User.objects.get(email=email)
+            if password is not None and password == confirm_password:
+                user.set_password(password)
+                user.save()
+                print("Password reset successfully")
+                context["passwordMatchStatus"] = True
+                context["passwordMessage"] = "Password reset successfully"
+                context["displayPasswordMatchMessage"] = True
+            else:
+                print("Passwords do not match")
+                context["passwordMatchStatus"] = False
+                context["passwordMessage"] = "Passwords do not match"
+                context["displayPasswordNotMatchMessage"] = True
     return render(request, 'resetPassword.html', {'context': context})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('/')
