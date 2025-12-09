@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Envelopes</h1>
+    {% if envelopes %}
+        <table border="1" style="border-collapse: collapse;"    >
+            <th> Envelope Name </th>
+            <th> Money Allocated </th>
+            <th> Money Remaining </th>
+            <th> Money Spent </th>
+            <th> Date Created </th>
+                {% for envelope in envelopes %}
+                    <tr>
+                        <td> {{ envelope.Envelope_Name }} </td>
+                        <td> {{ envelope.Money_Allocated }} </td>
+                        <td> {{ envelope.Money_Remaining }} </td>
+                        <td> {{ envelope.Money_Spent }} </td>
+                        <td> {{ envelope.Created_At }} </td>
+                    </tr>
+                {% endfor %}
+        </table>
+    {% else %}
+        <p>No envelopes found.</p>
+    {% endif %}
+</body>
+</html>

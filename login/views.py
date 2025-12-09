@@ -45,13 +45,19 @@ def render_signup_page(request):
             messages.info(request, "Passwords do not match.")
             return render(request, 'signup.html')
 
+        
+        context = {
+            "accountCreated": False,
+            "createdmessage": "Account created successfully"
+        }
+
         user = User.objects.create_user(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
         user.save()
+        context["accountCreated"] = True
         print("User created successfully")
-        return redirect('login')
+        return render(request, 'signup.html', {'context':context})
     
-    return render(request, 'signup.html')
-
+    return render(request, 'signup.html', {'context':{}})
 def render_reset_password_page(request):
     
     context = {
