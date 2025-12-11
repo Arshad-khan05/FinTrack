@@ -6,6 +6,32 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Hello</h1>
+    <h1>Update/Delete Envelopes</h1>
+    {% if envelopes %}
+        <table border="1" style="border-collapse: collapse;"    >
+            <th> Envelope Name </th>
+            <th> Money Allocated </th>
+            <th> Money Remaining </th>
+            <th> Money Spent </th>
+            <th> Date Created </th>
+                {% for envelope in envelopes %}
+                    <tr>
+                        <td> {{ envelope.Envelope_Name }} </td>
+                        <td> {{ envelope.Money_Allocated }} </td>
+                        <td> {{ envelope.Money_Remaining }} </td>
+                        <td> {{ envelope.Money_Spent }} </td>
+                        <td> {{ envelope.Created_At }} </td>
+                        <form action="delete/{{ envelope.id }}/">
+                            <td><button >Delete</button></td>
+                        </form>
+                        <form action="update/{{ envelope.id }}/">
+                            <td><button >Update</button></td>
+                        </form>
+                    </tr>
+                {% endfor %}
+        </table>
+    {% else %}
+        <p>No envelopes found.</p>
+    {% endif %}
 </body>
 </html>
