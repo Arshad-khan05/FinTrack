@@ -1,11 +1,13 @@
 from urllib import request
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Envelope_Home
 from django.contrib import messages
-
+from .forms import EnvelopeForm
 # Create your views here.
 
-def display_index(request):
+
+
+def display_addenvelope(request):
     if request.method == 'POST':
         print("POST request received in envelopes index view")
         username_id = request.user.id
@@ -39,6 +41,39 @@ def display_envelopes(request):
 
 
 
+def display_update_envelope(request):
+    envelopes = Envelope_Home.objects.filter(username=request.user)
+    return render(request, 'updateenvelope.html', {'envelopes': envelopes})
 
-def update_envelope(request):
-    return render(request, 'updateenvelope.html')
+
+
+def update_envelope(request, envelope_id):
+    
+    if request.method == 'POST':
+        envelope_name = str(request.POST.get('name'))
+        money_allocated = int(request.POST.get('budget'))
+        money_spent = int(request.POST.get('spend'))
+        money_remaining = money_allocated - money_spent
+
+        print(f"Data Got from form: Name - {envelope_name}, Budget - {money_allocated}, Spent - {money_spent}, Remaining - {money_remaining}")
+        envelope = Envelope_Home.objects.get(id=envelope_id, username=request.user)
+        envelope.Envelope_Name = envelope_name
+        envelope.Money_Allocated = money_allocated
+        envelope.Money_Spent = money_spent
+        envelope.Money_Remaining = money_allocated - money_spent
+        envelope.save()
+        print(f"Envelope with id {envelope_id} updated successfully.")
+        return redirect('updateenvelope')
+    
+
+
+    envelope = Envelope_Home.objects.get(id=envelope_id, username=request.user)        
+    return render(request, 'updateenvelopeform.html', {'envelope': envelope})
+
+
+
+def delete_envelope(request, envelope_id):
+    envelope = Envelope_Home.objects.get(id=envelope_id, username=request.user)
+    envelope.delete()
+    print(f"Envelope with id {envelope_id} deleted successfully.")
+    return redirect('updateenvelope')
