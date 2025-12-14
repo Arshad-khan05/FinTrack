@@ -9,3 +9,6 @@ class Envelope_Home(models.Model):
     Money_Remaining = models.IntegerField()
     Money_Spent = models.IntegerField()
     Created_At = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.Envelope_Name 
