@@ -9,7 +9,7 @@
     <h1>Welcome to FinTrack</h1>
     <form action="" autocomplete="off">
         {% if user.is_authenticated %}
-            <span>Hello, <b>{{ user.first_name }}</b>! <a href="/envelopes/addenvelope">Add Envelope</a> <a href="/envelopes/displayenvelopes">View Envelopes</a> <a href="/envelopes/updateenvelope">Update Envelope</a> <a href="/envelopedescription">Add description</a> <a href="envelopedescription/showenvelopedescription">Show Spend Details</a></span> <a href="/logout">Logout</a>
+            <span>Hello, <b>{{ user.first_name }}</b>! <a href="/envelopes/addenvelope">Add Envelope</a> <a href="/envelopes/displayenvelopes">View Envelopes</a> <a href="/envelopes/updateenvelope">Update Envelope</a> <a href="/envelopedescription">Add description</a> <a href="envelopedescription/showenvelopedescription">Show Spend Details</a> <a href="/delete_account">Delete User</a></span> <a href="/logout">Logout</a>
         {% else %}
             <a href="/login">Login</a>
             <a href="/signup">Sign Up</a>
