@@ -115,3 +115,14 @@ def render_reset_password_page(request):
 def logout_view(request):
     logout(request)
     return redirect('/')
+
+
+
+def delete_user_account(request):
+    user = request.user
+    logout(request)
+
+        
+    user.delete()
+    print("User account deleted successfully")
+    return redirect('/')
