@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Envelope Descriptions</h1>
+    {% if Descriptions %}
+        {% for envelope_name, data in Descriptions.items %}
+            <h2>{{ data.Envelope }}</h2>
+            {% if data.Description %}
+                <ul>
+                    {% for desc in data.Description %}
+                            <strong>Description: {{ desc.Description }}</strong><br>
+                            <li>Money Spent: {{ desc.Money_Spent }}</li><br>
+                            <li>Money Remaining: {{ desc.Money_Remaining }}</li><br>
+                            <li>Date: {{ desc.Date }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No entries</p>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</body>
+</html>
