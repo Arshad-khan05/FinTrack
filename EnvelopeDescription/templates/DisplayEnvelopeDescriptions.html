@@ -16,7 +16,7 @@
         {% if data.Description %}
         <ul>
             {% for desc in data.Description %}
-            <li><strong>Description: {{ desc.Description }}</strong></li>
+            <li><strong>Description: {{ desc.Description }}</strong><button>Update</button><button>Delete</button></li>
             <div>
                 <span style="padding-right: 50px;">Money Spent: {{ desc.Money_Spent }}</span>
                 <span style="padding-left: 50px;">Money Remaining: {{ desc.Money_Remaining }}</span><br>

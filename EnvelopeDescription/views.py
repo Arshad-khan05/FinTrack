@@ -13,9 +13,7 @@ def addEnvelopeDescription(request):
 
             envelope_description.username = request.user
             envelope_description.Money_Remaining = CurrentMoneyRemaininginEnvelope - envelope_description.Money_Spent
-            print(f"Current Money Remaining in Envelope before adding description: {CurrentMoneyRemaininginEnvelope}")
             envelope_description.save()
-            print("Envelope Description saved successfully")
 
             CurrentMoneyRemaininginEnvelope -= envelope_description.Money_Spent
             envelope = Envelope_Home.objects.get(id=envelope_description.EnvelopeName.id, username=request.user)
@@ -57,5 +55,4 @@ def displayEnvelopeDescriptions(request):
     envelopes = Envelope_Home.objects.filter(username=request.user)
     
     descriptions = getfiltered_envelope_descriptions(descriptions, envelopes)
-    print(descriptions)
     return render(request, 'DisplayEnvelopeDescriptions.html', {'Descriptions': descriptions})
