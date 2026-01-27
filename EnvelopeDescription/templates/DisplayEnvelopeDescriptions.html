@@ -16,7 +16,14 @@
         {% if data.Description %}
         <ul>
             {% for desc in data.Description %}
-            <li><strong>Description: {{ desc.Description }}</strong><button>Update</button><button>Delete</button></li>
+            <li>
+                <strong>Description: {{ desc.Description }}</strong>
+                <form action="{% url 'envelopedescription_delete' desc.id %}" method="post" style="display:inline">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+                <a href="{% url 'envelopedescription_update' desc.id %}">Update</a>
+            </li>
             <div>
                 <span style="padding-right: 50px;">Money Spent: {{ desc.Money_Spent }}</span>
                 <span style="padding-left: 50px;">Money Remaining: {{ desc.Money_Remaining }}</span><br>

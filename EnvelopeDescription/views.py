@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import EnvelopeDescriptionForm
 from Envelopes.models import Envelope_Home
 from .models import EnvelopeDescription
@@ -33,6 +33,7 @@ def getfiltered_envelope_descriptions(descriptions, envelopes):
         for envSpendDescriptions in descriptions:
             if envSpendDescriptions.EnvelopeName.id == envelope.id:
                 Description = {
+                    'id': envSpendDescriptions.id,
                     'Description': envSpendDescriptions.Description,
                     'Money_Spent': envSpendDescriptions.Money_Spent,
                     'Money_Remaining': envSpendDescriptions.Money_Remaining,
@@ -56,3 +57,74 @@ def displayEnvelopeDescriptions(request):
     
     descriptions = getfiltered_envelope_descriptions(descriptions, envelopes)
     return render(request, 'DisplayEnvelopeDescriptions.html', {'Descriptions': descriptions})
+
+
+def deleteEnvelopeDescription(request, id):
+    if request.method != 'POST':
+        return redirect('display_envelope_descriptions')
+
+    envelope_desc = get_object_or_404(EnvelopeDescription, id=id, username=request.user)
+
+    # Reverse the amounts on the related envelope
+    try:
+        envelope = Envelope_Home.objects.get(id=envelope_desc.EnvelopeName.id, username=request.user)
+    except Envelope_Home.DoesNotExist:
+        envelope = None
+
+    if envelope:
+        # When the spend entry was created, envelope.Money_Remaining was reduced by Money_Spent
+        # and envelope.Money_Spent was increased by Money_Spent. Reverse that here.
+        envelope.Money_Remaining = envelope.Money_Remaining + envelope_desc.Money_Spent
+        envelope.Money_Spent = max(0, envelope.Money_Spent - envelope_desc.Money_Spent)
+        envelope.save()
+
+    envelope_desc.delete()
+    return redirect('display_envelope_descriptions')
+
+
+def updateEnvelopeDescription(request, id):
+    envelope_desc = get_object_or_404(EnvelopeDescription, id=id, username=request.user)
+    old_envelope = envelope_desc.EnvelopeName
+    old_spent = envelope_desc.Money_Spent
+
+    if request.method == 'POST':
+        # Disabled fields aren't submitted by the browser. Copy POST data
+        # and inject the existing EnvelopeName so form validation passes.
+        post = request.POST.copy()
+        post['EnvelopeName'] = str(envelope_desc.EnvelopeName.id)
+
+        form = EnvelopeDescriptionForm(post, instance=envelope_desc, user=request.user)
+        if form.is_valid():
+            updated = form.save(commit=False)
+
+            # Force the envelope to remain unchanged during updates
+            updated.EnvelopeName = envelope_desc.EnvelopeName
+
+            new_spent = updated.Money_Spent
+            # Adjust envelope totals by the delta between new and old spent
+            delta = new_spent - old_spent
+            try:
+                env = Envelope_Home.objects.get(id=envelope_desc.EnvelopeName.id, username=request.user)
+            except Envelope_Home.DoesNotExist:
+                env = None
+            if env:
+                env.Money_Remaining = env.Money_Remaining - delta
+                env.Money_Spent = max(0, env.Money_Spent + delta)
+                env.save()
+
+            # Update the description's Money_Remaining to reflect the current envelope remaining
+            if env:
+                updated.Money_Remaining = env.Money_Remaining
+            else:
+                updated.Money_Remaining = 0
+
+            updated.username = request.user
+            updated.save()
+            return redirect('display_envelope_descriptions')
+    else:
+        form = EnvelopeDescriptionForm(instance=envelope_desc, user=request.user)
+        # Disable envelope selection so user cannot change it
+        if 'EnvelopeName' in form.fields:
+            form.fields['EnvelopeName'].disabled = True
+
+    return render(request, 'UpdateEnvelopeDescription.html', {'form': form, 'desc': envelope_desc})
