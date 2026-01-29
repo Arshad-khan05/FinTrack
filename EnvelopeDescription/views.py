@@ -1,25 +1,43 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from .forms import EnvelopeDescriptionForm
 from Envelopes.models import Envelope_Home
 from .models import EnvelopeDescription
 # Create your views here.
+@login_required(login_url='login')
 def addEnvelopeDescription(request):
     if request.method == 'POST':
         form = EnvelopeDescriptionForm(request.POST, user=request.user)
         if form.is_valid():
-            envelope_description = form.save(commit=False)
+            try:
+                envelope_description = form.save(commit=False)
 
-            CurrentMoneyRemaininginEnvelope = Envelope_Home.objects.get(id=envelope_description.EnvelopeName.id, username=request.user).Money_Remaining
+                envelope = Envelope_Home.objects.get(id=envelope_description.EnvelopeName.id, username=request.user)
+                
+                # Check if money spent exceeds available balance
+                if envelope_description.Money_Spent > envelope.Money_Remaining:
+                    messages.error(request, f"Cannot spend more than available balance of {envelope.Money_Remaining}.")
+                    return redirect('homepage')
 
-            envelope_description.username = request.user
-            envelope_description.Money_Remaining = CurrentMoneyRemaininginEnvelope - envelope_description.Money_Spent
-            envelope_description.save()
+                CurrentMoneyRemaininginEnvelope = envelope.Money_Remaining
 
-            CurrentMoneyRemaininginEnvelope -= envelope_description.Money_Spent
-            envelope = Envelope_Home.objects.get(id=envelope_description.EnvelopeName.id, username=request.user)
-            envelope.Money_Remaining = CurrentMoneyRemaininginEnvelope
-            envelope.Money_Spent += envelope_description.Money_Spent
-            envelope.save()
+                envelope_description.username = request.user
+                envelope_description.Money_Remaining = CurrentMoneyRemaininginEnvelope - envelope_description.Money_Spent
+                envelope_description.save()
+
+                CurrentMoneyRemaininginEnvelope -= envelope_description.Money_Spent
+                envelope.Money_Remaining = CurrentMoneyRemaininginEnvelope
+                envelope.Money_Spent += envelope_description.Money_Spent
+                envelope.save()
+                messages.success(request, "Expense recorded successfully.")
+                return redirect('display_envelope_descriptions')
+            except Envelope_Home.DoesNotExist:
+                messages.error(request, "Selected envelope not found.")
+                return redirect('homepage')
+            except Exception as e:
+                messages.error(request, "An error occurred while saving the expense.")
+                return redirect('homepage')
     else:
         form = EnvelopeDescriptionForm(user=request.user)
     return render(request, 'FormEnvelopeDescription.html', {'form': form})
@@ -50,6 +68,7 @@ def getfiltered_envelope_descriptions(descriptions, envelopes):
     return result
                     
 
+@login_required(login_url='login')
 def displayEnvelopeDescriptions(request):
 
     descriptions = EnvelopeDescription.objects.filter(username=request.user)
@@ -59,6 +78,7 @@ def displayEnvelopeDescriptions(request):
     return render(request, 'DisplayEnvelopeDescriptions.html', {'Descriptions': descriptions})
 
 
+@login_required(login_url='login')
 def deleteEnvelopeDescription(request, id):
     if request.method != 'POST':
         return redirect('display_envelope_descriptions')
@@ -82,6 +102,7 @@ def deleteEnvelopeDescription(request, id):
     return redirect('display_envelope_descriptions')
 
 
+@login_required(login_url='login')
 def updateEnvelopeDescription(request, id):
     envelope_desc = get_object_or_404(EnvelopeDescription, id=id, username=request.user)
     old_envelope = envelope_desc.EnvelopeName
