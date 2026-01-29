@@ -3,18 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>FinTrack - Home</title>
 </head>
 <body>
     <h1>Welcome to FinTrack</h1>
     <form action="" autocomplete="off">
         {% if user.is_authenticated %}
-            <span>Hello, <b>{{ user.first_name }}</b>! <a href="/envelopes/addenvelope">Add Envelope</a> <a href="/envelopes/displayenvelopes">View Envelopes</a> <a href="/envelopes/updateenvelope">Update Envelope</a> <a href="/envelopedescription">Add description</a> <a href="envelopedescription/showenvelopedescription">Show Spend Details</a> <a href="/delete_account">Delete User</a></span> <a href="/logout">Logout</a>
+            <span>Hello, <b>{{ user.first_name }}</b>! 
+                <a href="{% url 'addenvelope' %}">Add Envelope</a> 
+                <a href="{% url 'envelopes' %}">View Envelopes</a> 
+                <a href="{% url 'updateenvelope' %}">Update Envelope</a> 
+                <a href="{% url 'homepage' %}">Add description</a> 
+                <a href="{% url 'display_envelope_descriptions' %}">Show Spend Details</a> 
+                <a href="{% url 'delete_account' %}">Delete User</a>
+            </span> 
+            <a href="{% url 'logout' %}">Logout</a>
         {% else %}
-            <a href="/login">Login</a>
-            <a href="/signup">Sign Up</a>
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'signup' %}">Sign Up</a>
         {% endif %}
-        
     </form>
 </body>
 </html>

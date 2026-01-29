@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Sign Up - FinTrack</title>
 </head>
 <body>
     <form method="post" autocomplete="off">
@@ -22,16 +22,9 @@
         <label for="confirm-password">Confirm Password:</label>
         <input type="password" id="confirm-password" name="confirm-password" required><br><br>
         <button type="submit">Register</button><br><br>
-
-        {% if not context.createdmessage %}
         <label for="login">Already have an account?</label>
-        <a href="/login">Login here</a>
-        {% endif %}
+        <a href="{% url 'login' %}">Login here</a>
     </form>
-    
-    {% if context.accountCreated %}
-        <li>{{ context.createdmessage }}. <a href="/login">Login?</a></li>
-    {% endif %}
 
     {% if messages %}
         <ul>
@@ -40,6 +33,5 @@
             {% endfor %}
         </ul>
     {% endif %}
-
 </body>
 </html>
