@@ -1,5 +1,7 @@
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 class EnvelopeDescription(models.Model):
@@ -9,5 +11,21 @@ class EnvelopeDescription(models.Model):
     Money_Spent = models.IntegerField()
     Money_Remaining = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(check=Q(Money_Spent__gt=0), name='envdesc_spent_gt_0'),
+        ]
+
+    def clean(self):
+        errors = {}
+        if self.Money_Spent is None or self.Money_Spent <= 0:
+            errors['Money_Spent'] = "Money spent must be greater than 0."
+        if errors:
+            raise ValidationError(errors)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
 
