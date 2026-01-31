@@ -19,6 +19,10 @@ def display_addenvelope(request):
             if not envelope_name:
                 messages.error(request, "Envelope name is required.")
                 return redirect('addenvelope')
+
+            if Envelope_Home.objects.filter(username=request.user, Envelope_Name__iexact=envelope_name).exists():
+                messages.error(request, "You already have an envelope with that name.")
+                return redirect('addenvelope')
             
             if not money_allocated:
                 messages.error(request, "Money allocated is required.")
