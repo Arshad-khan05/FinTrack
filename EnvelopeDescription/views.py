@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 from .forms import EnvelopeDescriptionForm
 from Envelopes.models import Envelope_Home
 from .models import EnvelopeDescription
@@ -77,8 +78,17 @@ def getfiltered_envelope_descriptions(descriptions, envelopes):
 
 @login_required(login_url='login')
 def displayEnvelopeDescriptions(request):
+    # Get current month and year
+    now = timezone.now()
+    current_month = now.month
+    current_year = now.year
 
-    descriptions = EnvelopeDescription.objects.filter(username=request.user)
+    # Filter descriptions for current month only
+    descriptions = EnvelopeDescription.objects.filter(
+        username=request.user,
+        created_at__month=current_month,
+        created_at__year=current_year
+    )
     envelopes = Envelope_Home.objects.filter(username=request.user)
     
     descriptions = getfiltered_envelope_descriptions(descriptions, envelopes)
