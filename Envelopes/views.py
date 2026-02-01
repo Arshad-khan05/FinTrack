@@ -19,6 +19,10 @@ def display_addenvelope(request):
             if not envelope_name:
                 messages.error(request, "Envelope name is required.")
                 return redirect('addenvelope')
+
+            if Envelope_Home.objects.filter(username=request.user, Envelope_Name__iexact=envelope_name).exists():
+                messages.error(request, "You already have an envelope with that name.")
+                return redirect('addenvelope')
             
             if not money_allocated:
                 messages.error(request, "Money allocated is required.")
@@ -33,8 +37,11 @@ def display_addenvelope(request):
                 messages.error(request, "Money allocated must be a valid number.")
                 return redirect('addenvelope')
             
-            money_remaining = money_allocated
             money_spent = 0
+            money_remaining = money_allocated - money_spent
+            if money_remaining < 0:
+                messages.warning(request, "Remaining amount cannot be negative.")
+                return redirect('addenvelope')
             
             new_envelope = Envelope_Home(
                 username_id=int(username_id),
@@ -98,15 +105,13 @@ def update_envelope(request, envelope_id):
                 if money_allocated < 0 or money_spent < 0:
                     messages.error(request, "Amounts cannot be negative.")
                     return redirect('updateenvelope')
-                
-                if money_spent > money_allocated:
-                    messages.error(request, "Money spent cannot exceed money allocated.")
-                    return redirect('updateenvelope')
             except ValueError:
                 messages.error(request, "Money values must be valid numbers.")
                 return redirect('updateenvelope')
             
             money_remaining = money_allocated - money_spent
+            if money_remaining < 0:
+                messages.warning(request, "This update makes the remaining balance negative.")
             
             envelope.Envelope_Name = envelope_name
             envelope.Money_Allocated = money_allocated
@@ -123,7 +128,11 @@ def update_envelope(request, envelope_id):
 
 
 
+@login_required(login_url='login')
 def delete_envelope(request, envelope_id):
-    envelope = Envelope_Home.objects.get(id=envelope_id, username=request.user)
+    envelope = Envelope_Home.objects.filter(id=envelope_id, username=request.user).first()
+    if not envelope:
+        messages.error(request, "Envelope not found.")
+        return redirect('updateenvelope')
     envelope.delete()
     return redirect('updateenvelope')

@@ -7,10 +7,22 @@
 </head>
 <body>
     <h1>Welcome to the Envelope Description Homepage</h1>
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
+        {% if show_overflow_confirm %}
+            <p><strong>Warning:</strong> This transaction will make your remaining balance negative ({{ projected_remaining }}). Do you want to continue?</p>
+            <button type="submit" name="confirm_overflow" value="1">Continue anyway</button>
+        {% else %}
         <button type="submit">Submit</button>
+        {% endif %}
     </form>
 </body>
 </html>

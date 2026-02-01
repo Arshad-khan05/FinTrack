@@ -15,20 +15,27 @@ def addEnvelopeDescription(request):
 
                 envelope = Envelope_Home.objects.get(id=envelope_description.EnvelopeName.id, username=request.user)
                 
-                # Check if money spent exceeds available balance
-                if envelope_description.Money_Spent > envelope.Money_Remaining:
-                    messages.error(request, f"Cannot spend more than available balance of {envelope.Money_Remaining}.")
+                if envelope_description.Money_Spent <= 0:
+                    messages.warning(request, "Money spent must be greater than 0.")
                     return redirect('homepage')
 
-                CurrentMoneyRemaininginEnvelope = envelope.Money_Remaining
+                # Calculate projected totals (allow negative remaining with confirmation)
+                projected_spent = envelope.Money_Spent + envelope_description.Money_Spent
+                projected_remaining = envelope.Money_Allocated - projected_spent
+                if projected_remaining < 0 and request.POST.get('confirm_overflow') != '1':
+                    return render(request, 'FormEnvelopeDescription.html', {
+                        'form': form,
+                        'show_overflow_confirm': True,
+                        'projected_remaining': projected_remaining,
+                        'envelope': envelope
+                    })
 
                 envelope_description.username = request.user
-                envelope_description.Money_Remaining = CurrentMoneyRemaininginEnvelope - envelope_description.Money_Spent
+                envelope_description.Money_Remaining = projected_remaining
                 envelope_description.save()
 
-                CurrentMoneyRemaininginEnvelope -= envelope_description.Money_Spent
-                envelope.Money_Remaining = CurrentMoneyRemaininginEnvelope
-                envelope.Money_Spent += envelope_description.Money_Spent
+                envelope.Money_Spent = projected_spent
+                envelope.Money_Remaining = projected_remaining
                 envelope.save()
                 messages.success(request, "Expense recorded successfully.")
                 return redirect('display_envelope_descriptions')
@@ -92,10 +99,9 @@ def deleteEnvelopeDescription(request, id):
         envelope = None
 
     if envelope:
-        # When the spend entry was created, envelope.Money_Remaining was reduced by Money_Spent
-        # and envelope.Money_Spent was increased by Money_Spent. Reverse that here.
-        envelope.Money_Remaining = envelope.Money_Remaining + envelope_desc.Money_Spent
+        # Reverse the spend and re-derive remaining from allocated to keep consistency.
         envelope.Money_Spent = max(0, envelope.Money_Spent - envelope_desc.Money_Spent)
+        envelope.Money_Remaining = envelope.Money_Allocated - envelope.Money_Spent
         envelope.save()
 
     envelope_desc.delete()
@@ -122,6 +128,9 @@ def updateEnvelopeDescription(request, id):
             updated.EnvelopeName = envelope_desc.EnvelopeName
 
             new_spent = updated.Money_Spent
+            if new_spent <= 0:
+                messages.warning(request, "Money spent must be greater than 0.")
+                return redirect('display_envelope_descriptions')
             # Adjust envelope totals by the delta between new and old spent
             delta = new_spent - old_spent
             try:
@@ -129,8 +138,20 @@ def updateEnvelopeDescription(request, id):
             except Envelope_Home.DoesNotExist:
                 env = None
             if env:
-                env.Money_Remaining = env.Money_Remaining - delta
-                env.Money_Spent = max(0, env.Money_Spent + delta)
+                projected_spent = max(0, env.Money_Spent + delta)
+                projected_remaining = env.Money_Allocated - projected_spent
+                if projected_remaining < 0 and request.POST.get('confirm_overflow') != '1':
+                    if 'EnvelopeName' in form.fields:
+                        form.fields['EnvelopeName'].disabled = True
+                    return render(request, 'UpdateEnvelopeDescription.html', {
+                        'form': form,
+                        'desc': envelope_desc,
+                        'show_overflow_confirm': True,
+                        'projected_remaining': projected_remaining,
+                        'envelope': env
+                    })
+                env.Money_Spent = projected_spent
+                env.Money_Remaining = projected_remaining
                 env.save()
 
             # Update the description's Money_Remaining to reflect the current envelope remaining
