@@ -18,7 +18,7 @@ def addEnvelopeDescription(request):
                 
                 if envelope_description.Money_Spent <= 0:
                     messages.warning(request, "Money spent must be greater than 0.")
-                    return redirect('homepage')
+                    return render(request, 'FormEnvelopeDescription.html', {'form': form})
 
                 # Calculate projected totals (allow negative remaining with confirmation)
                 projected_spent = envelope.Money_Spent + envelope_description.Money_Spent
@@ -42,10 +42,10 @@ def addEnvelopeDescription(request):
                 return redirect('display_envelope_descriptions')
             except Envelope_Home.DoesNotExist:
                 messages.error(request, "Selected envelope not found.")
-                return redirect('homepage')
+                return render(request, 'FormEnvelopeDescription.html', {'form': form})
             except Exception as e:
                 messages.error(request, "An error occurred while saving the expense.")
-                return redirect('homepage')
+                return render(request, 'FormEnvelopeDescription.html', {'form': form})
     else:
         form = EnvelopeDescriptionForm(user=request.user)
     return render(request, 'FormEnvelopeDescription.html', {'form': form})
@@ -140,7 +140,11 @@ def updateEnvelopeDescription(request, id):
             new_spent = updated.Money_Spent
             if new_spent <= 0:
                 messages.warning(request, "Money spent must be greater than 0.")
-                return redirect('display_envelope_descriptions')
+                form = EnvelopeDescriptionForm(instance=envelope_desc, user=request.user)
+                if 'EnvelopeName' in form.fields:
+                    form.fields['EnvelopeName'].disabled = True
+                return render(request, 'UpdateEnvelopeDescription.html', {'form': form, 'desc': envelope_desc})
+            
             # Adjust envelope totals by the delta between new and old spent
             delta = new_spent - old_spent
             try:
@@ -151,10 +155,12 @@ def updateEnvelopeDescription(request, id):
                 projected_spent = max(0, env.Money_Spent + delta)
                 projected_remaining = env.Money_Allocated - projected_spent
                 if projected_remaining < 0 and request.POST.get('confirm_overflow') != '1':
-                    if 'EnvelopeName' in form.fields:
-                        form.fields['EnvelopeName'].disabled = True
+                    # Re-create form with POST data to preserve user input
+                    form_with_data = EnvelopeDescriptionForm(post, instance=envelope_desc, user=request.user)
+                    if 'EnvelopeName' in form_with_data.fields:
+                        form_with_data.fields['EnvelopeName'].disabled = True
                     return render(request, 'UpdateEnvelopeDescription.html', {
-                        'form': form,
+                        'form': form_with_data,
                         'desc': envelope_desc,
                         'show_overflow_confirm': True,
                         'projected_remaining': projected_remaining,
@@ -172,6 +178,7 @@ def updateEnvelopeDescription(request, id):
 
             updated.username = request.user
             updated.save()
+            messages.success(request, "Expense updated successfully.")
             return redirect('display_envelope_descriptions')
     else:
         form = EnvelopeDescriptionForm(instance=envelope_desc, user=request.user)

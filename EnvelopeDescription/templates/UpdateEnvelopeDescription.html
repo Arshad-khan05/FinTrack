@@ -28,7 +28,7 @@
                     <input 
                         type="text" 
                         class="form-input" 
-                        value="{{ field.value|default:'' }}" 
+                        value="{{ desc.EnvelopeName.Envelope_Name }}" 
                         disabled
                         style="background-color: var(--bg-secondary); cursor: not-allowed;"
                     >
@@ -73,9 +73,11 @@
                 </p>
             </div>
             
+            <input type="hidden" name="confirm_overflow" value="1">
+            
             <div class="form-actions">
                 <a href="{% url 'display_envelope_descriptions' %}" class="btn btn-ghost">Cancel</a>
-                <button type="submit" name="confirm_overflow" value="1" class="btn btn-danger">
+                <button type="submit" class="btn btn-danger">
                     ⚠️ Continue Anyway
                 </button>
             </div>
