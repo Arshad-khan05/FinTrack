@@ -1,41 +1,173 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% load static %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+{% block title %}Expense Details - FinTrack{% endblock %}
 
-<body>
-    <h1>Envelope Descriptions</h1>
-    {% if Descriptions %}
-    {% for envelope_name, data in Descriptions.items %}
-    <details>
-        <summary>{{ data.Envelope }}</summary>
-        {% if data.Description %}
-        <ul>
-            {% for desc in data.Description %}
-            <li>
-                <strong>Description: {{ desc.Description }}</strong>
-                <form action="{% url 'envelopedescription_delete' desc.id %}" method="post" style="display:inline">
-                    {% csrf_token %}
-                    <button type="submit">Delete</button>
-                </form>
-                <a href="{% url 'envelopedescription_update' desc.id %}">Update</a>
-            </li>
-            <div>
-                <span style="padding-right: 50px;">Money Spent: {{ desc.Money_Spent }}</span>
-                <span style="padding-left: 50px;">Money Remaining: {{ desc.Money_Remaining }}</span><br>
+{% block content %}
+<!-- Page Header -->
+<div class="envelope-list-header fade-in">
+    <div>
+        <h1>Expense Details</h1>
+        <p style="color: var(--text-secondary);">View all your expenses grouped by envelope</p>
+    </div>
+    <div class="envelope-controls">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input 
+                type="text" 
+                class="search-input" 
+                placeholder="Search expenses..."
+                id="expenseSearch"
+            >
+        </div>
+        <a href="{% url 'homepage' %}" class="btn btn-primary">
+            ➕ Add Expense
+        </a>
+    </div>
+</div>
+
+{% if Descriptions %}
+    <!-- Expense Groups -->
+    <div class="slide-up">
+        {% for envelope_name, data in Descriptions.items %}
+        <div class="expense-group" data-envelope-name="{{ envelope_name }}">
+            <!-- Expense Group Header -->
+            <div class="expense-group-header" onclick="toggleGroup(this)">
+                <div class="expense-group-title">
+                    <span style="font-size: 1.5rem;">📁</span>
+                    <div>
+                        <div class="expense-group-name">{{ data.Envelope }}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted);">
+                            {% if data.Description %}
+                                {{ data.Description|length }} expense{{ data.Description|length|pluralize }}
+                            {% else %}
+                                No expenses
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-right: 1rem;">Toggle</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
             </div>
-            Date: {{ desc.Date }} <br><br>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p>No entries</p>
-        {% endif %}
-    </details>
-    {% endfor %}
-    {% endif %}
-</body>
-</html>
+            
+            <!-- Expense Items -->
+            <div class="expense-items" style="display: none;">
+                {% if data.Description %}
+                    {% for desc in data.Description %}
+                    <div class="expense-item">
+                        <div class="expense-item-info">
+                            <div class="expense-item-name">
+                                📝 {{ desc.Description }}
+                            </div>
+                            <div class="expense-item-date">
+                                📅 {{ desc.Date|date:"M d, Y" }}
+                            </div>
+                        </div>
+                        <div class="expense-item-amount">
+                            ₹{{ desc.Money_Spent|floatformat:2 }}
+                        </div>
+                        <div class="expense-item-actions">
+                            <a href="{% url 'envelopedescription_update' desc.id %}" class="btn btn-sm btn-ghost">
+                                ✏️ Edit
+                            </a>
+                            <form action="{% url 'envelopedescription_delete' desc.id %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="button" onclick="confirmDeleteExpense(this, '{{ desc.Description }}')" class="btn btn-sm btn-danger">
+                                    🗑️ Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state" style="padding: 2rem;">
+                        <p style="color: var(--text-muted); margin: 0;">No expenses recorded yet</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <!-- Empty State -->
+    <div class="empty-state scale-in">
+        <div class="empty-icon">📊</div>
+        <h2 class="empty-title">No Expenses Yet</h2>
+        <p class="empty-description">
+            Start tracking your spending by adding your first expense!
+        </p>
+        <a href="{% url 'homepage' %}" class="btn btn-primary">
+            ➕ Add Your First Expense
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Toggle expense group
+    function toggleGroup(header) {
+        const items = header.nextElementSibling;
+        const icon = header.querySelector('.toggle-icon');
+        
+        if (items.style.display === 'none' || items.style.display === '') {
+            items.style.display = 'flex';
+            icon.textContent = '▲';
+            items.classList.add('fade-in');
+        } else {
+            items.style.display = 'none';
+            icon.textContent = '▼';
+        }
+    }
+    
+    // Expand all groups by default
+    document.addEventListener('DOMContentLoaded', () => {
+        const headers = document.querySelectorAll('.expense-group-header');
+        headers.forEach(header => {
+            toggleGroup(header);
+        });
+    });
+    
+    // Search functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('expenseSearch');
+        const expenseGroups = document.querySelectorAll('.expense-group');
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                
+                expenseGroups.forEach(group => {
+                    const envelopeName = group.dataset.envelopeName.toLowerCase();
+                    const expenseItems = group.querySelectorAll('.expense-item');
+                    let hasMatch = false;
+                    
+                    expenseItems.forEach(item => {
+                        const text = item.textContent.toLowerCase();
+                        if (text.includes(searchTerm) || envelopeName.includes(searchTerm)) {
+                            item.style.display = '';
+                            hasMatch = true;
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                    
+                    group.style.display = hasMatch || envelopeName.includes(searchTerm) ? '' : 'none';
+                });
+            });
+        }
+    });
+    
+    // Confirm delete function
+    function confirmDeleteExpense(button, description) {
+        confirmAction(
+            `Are you sure you want to delete the expense "${description}"? This action cannot be undone.`,
+            () => {
+                button.closest('form').submit();
+            }
+        );
+    }
+</script>
+{% endblock %}

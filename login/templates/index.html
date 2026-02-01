@@ -1,27 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinTrack - Home</title>
-</head>
-<body>
-    <h1>Welcome to FinTrack</h1>
-    <form action="" autocomplete="off">
-        {% if user.is_authenticated %}
-            <span>Hello, <b>{{ user.first_name }}</b>! 
-                <a href="{% url 'addenvelope' %}">Add Envelope</a> 
-                <a href="{% url 'envelopes' %}">View Envelopes</a> 
-                <a href="{% url 'updateenvelope' %}">Update Envelope</a> 
-                <a href="{% url 'homepage' %}">Add description</a> 
-                <a href="{% url 'display_envelope_descriptions' %}">Show Spend Details</a> 
-                <a href="{% url 'delete_account' %}">Delete User</a>
-            </span> 
-            <a href="{% url 'logout' %}">Logout</a>
-        {% else %}
-            <a href="{% url 'login' %}">Login</a>
-            <a href="{% url 'signup' %}">Sign Up</a>
-        {% endif %}
-    </form>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - FinTrack{% endblock %}
+
+{% block content %}
+<!-- Dashboard Header -->
+<div class="dashboard-header fade-in">
+    <h1 class="dashboard-title">
+        Welcome back, <span class="text-shimmer">{{ user.first_name }}</span>! 🎉
+    </h1>
+    <p class="dashboard-subtitle">
+        Manage your finances with ease and track every rupee
+    </p>
+</div>
+
+<!-- Dashboard Stats -->
+<div class="dashboard-stats slide-up stagger-1">
+    <div class="card stat-card hover-lift">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value count-up" data-value="{{ total_allocated|floatformat:0 }}">{{ total_allocated }}</div>
+        <div class="stat-label">Total Allocated</div>
+    </div>
+    <div class="card stat-card hover-lift">
+        <div class="stat-icon">💸</div>
+        <div class="stat-value count-up" data-value="{{ total_spent|floatformat:0 }}">{{ total_spent }}</div>
+        <div class="stat-label">Total Spent</div>
+    </div>
+    <div class="card stat-card hover-lift">
+        <div class="stat-icon">💵</div>
+        <div class="stat-value count-up" data-value="{{ total_remaining|floatformat:0 }}">{{ total_remaining }}</div>
+        <div class="stat-label">Remaining</div>
+    </div>
+    <div class="card stat-card hover-lift">
+        <div class="stat-icon">📊</div>
+        <div class="stat-value count-up" data-value="{{ total_envelopes }}">{{ total_envelopes }}</div>
+        <div class="stat-label">Active Envelopes</div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="dashboard-actions slide-up stagger-2">
+    <a href="{% url 'addenvelope' %}" class="card action-card icon-card hover-lift">
+        <div class="card-icon">📥</div>
+        <h3>Add Envelope</h3>
+        <p>Create a new budget envelope to track your spending</p>
+    </a>
+    
+    <a href="{% url 'updateenvelope' %}" class="card action-card icon-card hover-lift">
+        <div class="card-icon">✏️</div>
+        <h3>Update Envelope</h3>
+        <p>Modify existing envelope allocations</p>
+    </a>
+    
+    <a href="{% url 'homepage' %}" class="card action-card icon-card hover-lift">
+        <div class="card-icon">💸</div>
+        <h3>Add Expense</h3>
+        <p>Record a new expense to an envelope</p>
+    </a>
+    
+    <a href="{% url 'display_envelope_descriptions' %}" class="card action-card icon-card hover-lift">
+        <div class="card-icon">📈</div>
+        <h3>Expense Details</h3>
+        <p>View detailed spending breakdown by envelope</p>
+    </a>
+</div>
+
+<!-- Optional: Tips Section -->
+<div class="card slide-up stagger-3" style="margin-top: 3rem; text-align: center; background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);">
+    <h3 style="margin-bottom: 1rem;">💡 Pro Tip</h3>
+    <p style="color: var(--text-secondary);">
+        Review your envelopes regularly and adjust allocations based on your spending patterns. 
+        The envelope system works best when you stick to your budget!
+    </p>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add stagger animation to action cards
+    document.addEventListener('DOMContentLoaded', () => {
+        const cards = document.querySelectorAll('.action-card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = (index * 0.1) + 's';
+        });
+    });
+</script>
+{% endblock %}

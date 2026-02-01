@@ -1,28 +1,91 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Welcome to the Envelope Description Homepage</h1>
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Expense - FinTrack{% endblock %}
+
+{% block content %}
+<div class="form-container fade-in">
+    <!-- Form Header -->
+    <div class="form-header">
+        <h1>💸 Record New Expense</h1>
+        <p style="color: var(--text-secondary);">Track your spending by adding expense details</p>
+    </div>
+    
+    <!-- Form Card -->
+    <div class="card form-card slide-up">
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Render Django form fields with custom styling -->
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                    {{ field.label }}
+                </label>
+                
+                {% if field.field.widget.input_type == 'select' %}
+                    {{ field }}
+                {% elif field.field.widget.input_type == 'textarea' %}
+                    <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-textarea" {% if field.field.required %}required{% endif %}>{{ field.value|default:'' }}</textarea>
+                {% else %}
+                    <input 
+                        type="{{ field.field.widget.input_type }}" 
+                        name="{{ field.name }}" 
+                        id="{{ field.id_for_label }}" 
+                        class="form-input"
+                        value="{{ field.value|default:'' }}"
+                        {% if field.field.required %}required{% endif %}
+                        {% if field.name == 'Money_Spent' %}step="0.01" min="0"{% endif %}
+                    >
+                {% endif %}
+                
+                {% if field.help_text %}
+                    <span class="form-help">{{ field.help_text }}</span>
+                {% endif %}
+                
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <span class="form-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
             {% endfor %}
+            
+            <!-- Overflow Warning -->
+            {% if show_overflow_confirm %}
+            <div class="card" style="margin-bottom: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%); border: 2px solid var(--warning);">
+                <h3 style="color: var(--warning); margin-bottom: 1rem;">⚠️ Warning</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 0;">
+                    This transaction will make your remaining balance negative (<strong style="color: var(--error);">{{ projected_remaining }}</strong>). 
+                    Do you want to continue anyway?
+                </p>
+            </div>
+            
+            <div class="form-actions">
+                <a href="{% url 'homepage' %}" class="btn btn-ghost">Cancel</a>
+                <button type="submit" name="confirm_overflow" value="1" class="btn btn-danger">
+                    ⚠️ Continue Anyway
+                </button>
+            </div>
+            {% else %}
+            <div class="form-actions">
+                <a href="{% url 'homepage' %}" class="btn btn-ghost">Cancel</a>
+                <button type="submit" class="btn btn-primary">
+                    ✓ Record Expense
+                </button>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+    
+    <!-- Quick Tips -->
+    <div class="card slide-up stagger-1" style="margin-top: 2rem; background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);">
+        <h3 style="margin-bottom: 1rem;">💡 Expense Tips</h3>
+        <ul style="color: var(--text-secondary); padding-left: 1.5rem;">
+            <li style="margin-bottom: 0.5rem;">Add detailed descriptions to track where your money goes</li>
+            <li style="margin-bottom: 0.5rem;">Record expenses immediately to maintain accuracy</li>
+            <li>Review your spending regularly to identify patterns</li>
         </ul>
-    {% endif %}
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        {% if show_overflow_confirm %}
-            <p><strong>Warning:</strong> This transaction will make your remaining balance negative ({{ projected_remaining }}). Do you want to continue?</p>
-            <button type="submit" name="confirm_overflow" value="1">Continue anyway</button>
-        {% else %}
-        <button type="submit">Submit</button>
-        {% endif %}
-    </form>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}

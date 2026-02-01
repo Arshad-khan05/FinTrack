@@ -2,9 +2,29 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
+from Envelopes.models import Envelope_Home
+from EnvelopeDescription.models import EnvelopeDescription
+from django.db.models import Sum
 
 # Create your views here.
 def render_homepage(request):
+    if request.user.is_authenticated:
+        # Get all envelopes for the user
+        envelopes = Envelope_Home.objects.filter(username=request.user)
+        
+        # Calculate totals
+        total_allocated = envelopes.aggregate(Sum('Money_Allocated'))['Money_Allocated__sum'] or 0
+        total_spent = envelopes.aggregate(Sum('Money_Spent'))['Money_Spent__sum'] or 0
+        total_remaining = total_allocated - total_spent
+        total_envelopes = envelopes.count()
+        
+        context = {
+            'total_allocated': total_allocated,
+            'total_spent': total_spent,
+            'total_remaining': total_remaining,
+            'total_envelopes': total_envelopes,
+        }
+        return render(request, 'index.html', context)
     return render(request, 'index.html')
 
 def render_login_page(request):

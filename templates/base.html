@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FinTrack - Modern envelope budgeting system">
+    <title>{% block title %}FinTrack - Smart Budget Management{% endblock %}</title>
+    
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animations.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pages.css' %}">
+    
+    <!-- Chart.js CDN for data visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    {% if user.is_authenticated %}
+    <nav class="navbar slide-down">
+        <div class="navbar-container">
+            <a href="{% url 'homepage' %}" class="navbar-brand">
+                <span style="font-size: 1.5rem;">💰</span>
+                FinTrack
+            </a>
+            
+            <button class="navbar-toggle" aria-label="Toggle menu">
+                <span>☰</span>
+            </button>
+            
+            <ul class="navbar-menu">
+                <li><a href="/" class="navbar-link">🏠 Dashboard</a></li>
+                <li><a href="{% url 'addenvelope' %}" class="navbar-link">➕ Add Envelope</a></li>
+                <li><a href="{% url 'updateenvelope' %}" class="navbar-link">✏️ Update Envelope</a></li>
+                <li><a href="{% url 'homepage' %}" class="navbar-link">💸 Add Expense</a></li>
+                <li><a href="{% url 'display_envelope_descriptions' %}" class="navbar-link">📈 Expense Details</a></li>
+                
+                <li class="user-menu">
+                    <div class="user-avatar">
+                        {{ user.first_name|slice:":1"|upper }}
+                    </div>
+                    <div class="user-dropdown">
+                        <div class="user-dropdown-item" style="cursor: default;">
+                            <strong>{{ user.first_name }} {{ user.last_name }}</strong>
+                        </div>
+                        <div class="user-dropdown-divider"></div>
+                        <a href="{% url 'delete_account' %}" class="user-dropdown-item">
+                            🗑️ Delete Account
+                        </a>
+                        <a href="{% url 'logout' %}" class="user-dropdown-item">
+                            🚪 Logout
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    {% endif %}
+    
+    <!-- Django Messages Container (will be converted to toasts by JavaScript) -->
+    {% if messages %}
+    <ul class="messages" style="display: none;">
+        {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>
+                    Made with <span style="color: var(--error); animation: pulse 1.5s infinite;">❤️</span> 
+                    | FinTrack &copy; 2026 | Your Smart Budget Companion
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript Files -->
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/animations.js' %}"></script>
+    <script src="{% static 'js/charts.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
