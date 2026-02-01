@@ -50,10 +50,16 @@ def render_signup_page(request):
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '')
         confirm_password = request.POST.get('confirm-password', '')
+        terms_accepted = request.POST.get('terms', False)
 
         # Validate required fields
         if not all([first_name, last_name, email, username, password, confirm_password]):
             messages.error(request, "All fields are required.")
+            return redirect('signup')
+
+        # Validate terms acceptance
+        if not terms_accepted:
+            messages.error(request, "You must accept the terms and conditions to proceed.")
             return redirect('signup')
 
         if User.objects.filter(username=username).exists():
