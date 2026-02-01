@@ -7,9 +7,9 @@ class Envelope_Home(models.Model):
     # Create your models here.
     username = models.ForeignKey(User, on_delete=models.CASCADE)  # linked to username indirectly
     Envelope_Name = models.CharField(max_length=200)
-    Money_Allocated = models.IntegerField()
-    Money_Remaining = models.IntegerField()
-    Money_Spent = models.IntegerField()
+    Money_Allocated = models.DecimalField(max_digits=10, decimal_places=2)
+    Money_Remaining = models.DecimalField(max_digits=10, decimal_places=2)
+    Money_Spent = models.DecimalField(max_digits=10, decimal_places=2)
     Created_At = models.DateTimeField(auto_now_add=True)
 
     class Meta:

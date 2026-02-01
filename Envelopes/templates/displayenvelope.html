@@ -1,31 +1,116 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Envelopes</h1>
-    {% if envelopes %}
-        <table border="1" style="border-collapse: collapse;"    >
-            <th> Envelope Name </th>
-            <th> Money Allocated </th>
-            <th> Money Remaining </th>
-            <th> Money Spent </th>
-            <th> Date Created </th>
-                {% for envelope in envelopes %}
-                    <tr>
-                        <td> {{ envelope.Envelope_Name }} </td>
-                        <td> {{ envelope.Money_Allocated }} </td>
-                        <td> {{ envelope.Money_Remaining }} </td>
-                        <td> {{ envelope.Money_Spent }} </td>
-                        <td> {{ envelope.Created_At }} </td>
-                    </tr>
-                {% endfor %}
-        </table>
-    {% else %}
-        <p>No envelopes found.</p>
-    {% endif %}
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}View Envelopes - FinTrack{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="envelope-list-header fade-in">
+    <div>
+        <h1>Your Envelopes</h1>
+        <p style="color: var(--text-secondary);">Track all your budget envelopes in one place</p>
+    </div>
+    <div class="envelope-controls">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input 
+                type="text" 
+                class="search-input" 
+                placeholder="Search envelopes..."
+                id="envelopeSearch"
+            >
+        </div>
+        <a href="{% url 'addenvelope' %}" class="btn btn-primary">
+            ➕ Add Envelope
+        </a>
+    </div>
+</div>
+
+{% if envelopes %}
+    <!-- Envelopes Grid -->
+    <div class="envelope-grid slide-up">
+        {% for envelope in envelopes %}
+        <div class="card envelope-card hover-lift" data-envelope-name="{{ envelope.Envelope_Name }}">
+            <div class="envelope-card-header">
+                <div class="envelope-name">
+                    📁 {{ envelope.Envelope_Name }}
+                </div>
+            </div>
+            
+            <div class="envelope-amount">
+                ₹{{ envelope.Money_Remaining|floatformat:2 }}
+            </div>
+            
+            <div class="envelope-progress">
+                {% widthratio envelope.Money_Spent envelope.Money_Allocated 100 as spent_percentage %}
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ spent_percentage }}%"></div>
+                </div>
+            </div>
+            
+            <div class="envelope-details">
+                <div class="envelope-stat">
+                    <span class="envelope-stat-label">Allocated</span>
+                    <span class="envelope-stat-value">₹{{ envelope.Money_Allocated|floatformat:2 }}</span>
+                </div>
+                <div class="envelope-stat">
+                    <span class="envelope-stat-label">Spent</span>
+                    <span class="envelope-stat-value" style="color: var(--error);">₹{{ envelope.Money_Spent|floatformat:2 }}</span>
+                </div>
+            </div>
+            
+            <div class="card-footer" style="margin-top: 1rem; font-size: 0.75rem; color: var(--text-muted);">
+                Created: {{ envelope.Created_At|date:"M d, Y" }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <!-- Empty State -->
+    <div class="empty-state scale-in">
+        <div class="empty-icon">📭</div>
+        <h2 class="empty-title">No Envelopes Yet</h2>
+        <p class="empty-description">
+            Start budgeting by creating your first envelope!
+        </p>
+        <a href="{% url 'addenvelope' %}" class="btn btn-primary">
+            ➕ Create Your First Envelope
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Search functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('envelopeSearch');
+        const envelopeCards = document.querySelectorAll('.envelope-card');
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                
+                envelopeCards.forEach(card => {
+                    const envelopeName = card.dataset.envelopeName.toLowerCase();
+                    if (envelopeName.includes(searchTerm)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+        // Animate progress bars
+        const progressBars = document.querySelectorAll('.progress-bar');
+        progressBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 300);
+        });
+    });
+</script>
+{% endblock %}

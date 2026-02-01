@@ -1,37 +1,118 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Update/Delete Envelopes</h1>
-    {% if envelopes %}
-        <table border="1" style="border-collapse: collapse;"    >
-            <th> Envelope Name </th>
-            <th> Money Allocated </th>
-            <th> Money Remaining </th>
-            <th> Money Spent </th>
-            <th> Date Created </th>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Update Envelopes - FinTrack{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="envelope-list-header fade-in">
+    <div>
+        <h1>✏️ Manage Envelopes</h1>
+        <p style="color: var(--text-secondary);">Update or delete your budget envelopes</p>
+    </div>
+    <div class="envelope-controls">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input 
+                type="text" 
+                class="search-input" 
+                placeholder="Search envelopes..."
+                id="envelopeSearch"
+            >
+        </div>
+    </div>
+</div>
+
+{% if envelopes %}
+    <!-- Envelopes Table -->
+    <div class="table-container slide-up">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>📁 Envelope Name</th>
+                    <th>💰 Allocated</th>
+                    <th>💵 Remaining</th>
+                    <th>💸 Spent</th>
+                    <th>📅 Created</th>
+                    <th>⚙️ Actions</th>
+                </tr>
+            </thead>
+            <tbody>
                 {% for envelope in envelopes %}
-                    <tr>
-                        <td> {{ envelope.Envelope_Name }} </td>
-                        <td> {{ envelope.Money_Allocated }} </td>
-                        <td> {{ envelope.Money_Remaining }} </td>
-                        <td> {{ envelope.Money_Spent }} </td>
-                        <td> {{ envelope.Created_At }} </td>
-                        <form action="delete/{{ envelope.id }}/">
-                            <td><button >Delete</button></td>
-                        </form>
-                        <form action="update/{{ envelope.id }}/">
-                            <td><button >Update</button></td>
-                        </form>
-                    </tr>
+                <tr data-envelope-name="{{ envelope.Envelope_Name }}">
+                    <td style="font-weight: 600;">{{ envelope.Envelope_Name }}</td>
+                    <td>₹{{ envelope.Money_Allocated|floatformat:2 }}</td>
+                    <td>
+                        <span class="{% if envelope.Money_Remaining > 0 %}badge badge-success{% else %}badge badge-danger{% endif %}">
+                            ₹{{ envelope.Money_Remaining|floatformat:2 }}
+                        </span>
+                    </td>
+                    <td style="color: var(--error);">₹{{ envelope.Money_Spent|floatformat:2 }}</td>
+                    <td>{{ envelope.Created_At|date:"M d, Y" }}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="update/{{ envelope.id }}/" class="btn btn-sm btn-ghost">
+                                ✏️ Edit
+                            </a>
+                            <button 
+                                onclick="confirmDelete('{{ envelope.Envelope_Name }}', 'delete/{{ envelope.id }}/')"
+                                class="btn btn-sm btn-danger"
+                            >
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
                 {% endfor %}
+            </tbody>
         </table>
-    {% else %}
-        <p>No envelopes found.</p>
-    {% endif %}
-</body>
-</html>
+    </div>
+{% else %}
+    <!-- Empty State -->
+    <div class="empty-state scale-in">
+        <div class="empty-icon">📭</div>
+        <h2 class="empty-title">No Envelopes Found</h2>
+        <p class="empty-description">
+            You haven't created any envelopes yet. Start by adding one!
+        </p>
+        <a href="{% url 'addenvelope' %}" class="btn btn-primary">
+            ➕ Create Envelope
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Search functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('envelopeSearch');
+        const tableRows = document.querySelectorAll('tbody tr');
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                
+                tableRows.forEach(row => {
+                    const envelopeName = row.dataset.envelopeName.toLowerCase();
+                    if (envelopeName.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
+    
+    // Confirm delete function
+    function confirmDelete(envelopeName, deleteUrl) {
+        confirmAction(
+            `Are you sure you want to delete the "${envelopeName}" envelope? This action cannot be undone.`,
+            () => {
+                window.location.href = deleteUrl;
+            }
+        );
+    }
+</script>
+{% endblock %}

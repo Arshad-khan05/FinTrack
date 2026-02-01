@@ -1,37 +1,134 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - FinTrack</title>
-</head>
-<body>
-    <form method="post" autocomplete="off">
-        {% csrf_token %}
-        <h2>Sign Up</h2>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
-        <label for="firstname">First Name:</label>
-        <input type="text" id="firstname" name="firstname" required><br><br>
-        <label for="lastname">Last Name:</label>
-        <input type="text" id="lastname" name="lastname" required><br><br>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <label for="confirm-password">Confirm Password:</label>
-        <input type="password" id="confirm-password" name="confirm-password" required><br><br>
-        <button type="submit">Register</button><br><br>
-        <label for="login">Already have an account?</label>
-        <a href="{% url 'login' %}">Login here</a>
-    </form>
+{% extends 'base.html' %}
+{% load static %}
 
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-</body>
-</html>
+{% block title %}Sign Up - FinTrack{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="card auth-card scale-in">
+        <!-- Auth Header -->
+        <div class="auth-header">
+            <div class="auth-icon">🎉</div>
+            <h2 class="auth-title">Join FinTrack</h2>
+            <p class="auth-subtitle">Create your account and start budgeting</p>
+        </div>
+        
+        <!-- Signup Form -->
+        <form method="post" autocomplete="off" class="auth-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="username" class="form-label">Username</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    class="form-input" 
+                    placeholder="Choose a unique username"
+                    required
+                    autofocus
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="firstname" class="form-label">First Name</label>
+                <input 
+                    type="text" 
+                    id="firstname" 
+                    name="firstname" 
+                    class="form-input" 
+                    placeholder="Your first name"
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="lastname" class="form-label">Last Name</label>
+                <input 
+                    type="text" 
+                    id="lastname" 
+                    name="lastname" 
+                    class="form-input" 
+                    placeholder="Your last name"
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    class="form-input" 
+                    placeholder="your.email@example.com"
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    class="form-input" 
+                    placeholder="Create a strong password"
+                    required
+                >
+                <span class="form-help">At least 8 characters recommended</span>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirm-password" class="form-label">Confirm Password</label>
+                <input 
+                    type="password" 
+                    id="confirm-password" 
+                    name="confirm-password" 
+                    class="form-input" 
+                    placeholder="Re-enter your password"
+                    required
+                >
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                🚀 Create Account
+            </button>
+        </form>
+        
+        <!-- Auth Footer -->
+        <div class="auth-footer">
+            <p>
+                Already have an account? 
+                <a href="{% url 'login' %}">Login here</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Password matching validation
+    document.addEventListener('DOMContentLoaded', () => {
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirm-password');
+        
+        confirmPassword.addEventListener('input', () => {
+            if (password.value !== confirmPassword.value) {
+                confirmPassword.setCustomValidity('Passwords do not match');
+            } else {
+                confirmPassword.setCustomValidity('');
+            }
+        });
+        
+        password.addEventListener('input', () => {
+            if (confirmPassword.value && password.value !== confirmPassword.value) {
+                confirmPassword.setCustomValidity('Passwords do not match');
+            } else {
+                confirmPassword.setCustomValidity('');
+            }
+        });
+    });
+</script>
+{% endblock %}

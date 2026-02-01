@@ -1,0 +1,350 @@
+/* ============================================
+   QUICK START GUIDE
+   
+   This file contains quick reference for common
+   UI patterns and components in FinTrack
+   ============================================ */
+
+/* ===== COLOR USAGE ===== */
+.example-primary    { color: var(--primary); }        /* Main brand color */
+.example-success    { color: var(--success); }        /* Positive actions */
+.example-error      { color: var(--error); }          /* Errors, deletions */
+.example-warning    { color: var(--warning); }        /* Warnings */
+.example-info       { color: var(--info); }           /* Information */
+
+/* ===== COMMON LAYOUTS ===== */
+.page-with-header {
+    /* Standard page layout */
+}
+
+.centered-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* ===== ANIMATION CLASSES ===== */
+/* .fade-in     - Fade in on load */
+/* .slide-up    - Slide up from bottom */
+/* .slide-down  - Slide down from top */
+/* .slide-left  - Slide from right */
+/* .slide-right - Slide from left */
+/* .scale-in    - Scale from center */
+/* .rotate-in   - Rotate while appearing */
+
+/* Stagger animations */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+
+/* Hover effects */
+/* .hover-lift  - Lifts up on hover */
+/* .hover-scale - Scales up on hover */
+/* .hover-glow  - Glows on hover */
+
+/* ===== BUTTON EXAMPLES ===== */
+/*
+<button class="btn btn-primary">Primary Action</button>
+<button class="btn btn-secondary">Secondary Action</button>
+<button class="btn btn-success">Save/Confirm</button>
+<button class="btn btn-danger">Delete/Cancel</button>
+<button class="btn btn-outline">Outline Style</button>
+<button class="btn btn-ghost">Ghost Style</button>
+
+Sizes:
+<button class="btn btn-sm btn-primary">Small</button>
+<button class="btn btn-primary">Normal</button>
+<button class="btn btn-lg btn-primary">Large</button>
+*/
+
+/* ===== CARD EXAMPLES ===== */
+/*
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Card Title</h3>
+    </div>
+    <div class="card-body">
+        Card content goes here
+    </div>
+    <div class="card-footer">
+        Footer content
+    </div>
+</div>
+
+With hover effect:
+<div class="card hover-lift">...</div>
+
+Icon card:
+<div class="card icon-card">
+    <div class="card-icon">🎯</div>
+    <h3>Title</h3>
+    <p>Description</p>
+</div>
+*/
+
+/* ===== FORM EXAMPLES ===== */
+/*
+<form class="form-card">
+    <div class="form-group">
+        <label class="form-label">Label Text</label>
+        <input type="text" class="form-input" placeholder="Placeholder">
+        <span class="form-help">Helper text</span>
+        <span class="form-error">Error message</span>
+    </div>
+    
+    <div class="form-group">
+        <label class="form-label">Select</label>
+        <select class="form-select">
+            <option>Option 1</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label class="form-label">Textarea</label>
+        <textarea class="form-textarea"></textarea>
+    </div>
+    
+    <div class="form-actions">
+        <button type="button" class="btn btn-ghost">Cancel</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+*/
+
+/* ===== TABLE EXAMPLES ===== */
+/*
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Column 1</th>
+                <th>Column 2</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Data 1</td>
+                <td>Data 2</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+*/
+
+/* ===== BADGE EXAMPLES ===== */
+/*
+<span class="badge badge-primary">Primary</span>
+<span class="badge badge-success">Success</span>
+<span class="badge badge-warning">Warning</span>
+<span class="badge badge-danger">Danger</span>
+*/
+
+/* ===== PROGRESS BAR EXAMPLES ===== */
+/*
+<div class="progress">
+    <div class="progress-bar" style="width: 75%"></div>
+</div>
+*/
+
+/* ===== TOAST NOTIFICATION (JavaScript) ===== */
+/*
+// Success
+showToast('Operation successful!', 'success');
+
+// Error
+showToast('Something went wrong!', 'error');
+
+// Warning
+showToast('Please check your input', 'warning');
+
+// Info
+showToast('Did you know?', 'info');
+
+// Custom duration (default 5000ms)
+showToast('Message', 'success', 3000);
+*/
+
+/* ===== MODAL (JavaScript) ===== */
+/*
+// Confirm action
+confirmAction('Are you sure?', () => {
+    // Action confirmed
+});
+
+// Custom modal
+const modal = document.createElement('div');
+modal.className = 'modal-overlay';
+modal.innerHTML = `
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Title</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            Content
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary">OK</button>
+        </div>
+    </div>
+`;
+document.body.appendChild(modal);
+*/
+
+/* ===== EMPTY STATE ===== */
+/*
+<div class="empty-state">
+    <div class="empty-icon">🎯</div>
+    <h2 class="empty-title">No Data Found</h2>
+    <p class="empty-description">
+        Start by adding some items
+    </p>
+    <button class="btn btn-primary">Add Item</button>
+</div>
+*/
+
+/* ===== SEARCH BOX ===== */
+/*
+<div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" placeholder="Search...">
+</div>
+*/
+
+/* ===== UTILITY CLASSES ===== */
+/*
+Spacing:
+.mt-1, .mt-2, .mt-3, .mt-4  (margin-top)
+.mb-1, .mb-2, .mb-3, .mb-4  (margin-bottom)
+.p-1, .p-2, .p-3, .p-4      (padding)
+
+Flexbox:
+.flex                (display: flex)
+.flex-center         (center both axes)
+.flex-between        (space-between)
+.flex-column         (flex-direction: column)
+.gap-1, .gap-2, .gap-3, .gap-4  (gap)
+
+Grid:
+.grid                (display: grid)
+.grid-2              (2 column grid)
+.grid-3              (3 column grid)
+.grid-4              (4 column grid)
+
+Text:
+.text-center
+.text-left
+.text-right
+
+Visibility:
+.hidden              (display: none)
+.sr-only            (screen reader only)
+*/
+
+/* ===== EMOJI GUIDE ===== */
+/*
+Finance:
+💰 Money/Finance
+💵 Dollar/Cash
+💸 Money with wings (spending)
+💳 Credit card
+🏦 Bank
+📊 Chart/Statistics
+📈 Trending up
+📉 Trending down
+💼 Business/Work
+
+Actions:
+➕ Add/Plus
+✏️ Edit/Pencil
+🗑️ Delete/Trash
+✅ Success/Check
+❌ Error/Close
+⚠️ Warning
+ℹ️ Info
+🔍 Search
+⚙️ Settings
+🔑 Security/Password
+
+Objects:
+📁 Folder/Category
+📋 List/Clipboard
+📅 Calendar/Date
+📝 Note/Description
+🎯 Target/Goal
+🏠 Home
+👤 User/Profile
+🚪 Exit/Logout
+*/
+
+/* ===== JAVASCRIPT UTILITIES ===== */
+/*
+// Format currency
+formatCurrency(1234.56);  // Returns: ₹ 1,234.56
+
+// Format date
+formatDate('2024-01-15');  // Returns: Jan 15, 2024
+
+// Animate number
+animateNumber(element, 0, 1000, 2000);  // From 0 to 1000 in 2 seconds
+
+// Show success animation
+showSuccessAnimation('Saved successfully!');
+
+// Show confetti
+showConfetti(3000);  // Duration in ms
+
+// Smooth scroll
+scrollToElement('#target', 100);  // Offset 100px
+
+// Copy to clipboard
+copyToClipboard('Text to copy');
+
+// Debounce function
+const debouncedSearch = debounce(searchFunction, 300);
+*/
+
+/* ===== RESPONSIVE DESIGN ===== */
+/*
+Mobile First Approach:
+1. Design for mobile (< 480px) first
+2. Add tablet styles (481px - 768px)
+3. Add desktop styles (> 768px)
+
+Example:
+.element {
+    // Mobile styles here
+}
+
+@media (min-width: 481px) {
+    .element {
+        // Tablet styles
+    }
+}
+
+@media (min-width: 769px) {
+    .element {
+        // Desktop styles
+    }
+}
+*/
+
+/* ===== BEST PRACTICES ===== */
+/*
+1. Always use semantic HTML
+2. Add aria-labels for accessibility
+3. Use CSS variables for consistency
+4. Keep animations subtle (< 500ms)
+5. Test on multiple devices
+6. Optimize images and assets
+7. Use proper z-index layering:
+   - Base content: 1
+   - Dropdowns: 100
+   - Sticky elements: 1000
+   - Modals/Toasts: 10000
+8. Maintain color contrast for readability
+9. Add loading states for async operations
+10. Use progressive enhancement
+11. Regularly review and refactor code
+*/

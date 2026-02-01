@@ -1,29 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% load static %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Envelopes</title>
-</head>
+{% block title %}Add Envelope - FinTrack{% endblock %}
 
-<body>
-    <h1>Enter the envelope details</h1>
-    <form method="post" autocomplete="off">
-        {% csrf_token %}
-        <label for="envelope_name" >Envelope Name:</label>
-        <input type="text" id="envelope_name" name="envelope_name" required><br><br>
-        <label for="money_allocated">Money Allocated:</label>
-        <input type="number" id="money_allocated" name="money_allocated" required><br><br>
-        <button type="submit">Add Envelope</button>
-    </form>
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
+{% block content %}
+<div class="form-container fade-in">
+    <!-- Form Header -->
+    <div class="form-header">
+        <h1>📥 Create New Envelope</h1>
+        <p style="color: var(--text-secondary);">Set up a new budget category to track your spending</p>
+    </div>
+    
+    <!-- Form Card -->
+    <div class="card form-card slide-up">
+        <form method="post" autocomplete="off">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="envelope_name" class="form-label">Envelope Name</label>
+                <input 
+                    type="text" 
+                    id="envelope_name" 
+                    name="envelope_name" 
+                    class="form-input" 
+                    placeholder="e.g., Groceries, Entertainment, Savings"
+                    required
+                    autofocus
+                >
+                <span class="form-help">Choose a descriptive name for this budget category</span>
+            </div>
+            
+            <div class="form-group">
+                <label for="money_allocated" class="form-label">Money Allocated (₹)</label>
+                <input 
+                    type="number" 
+                    id="money_allocated" 
+                    name="money_allocated" 
+                    class="form-input" 
+                    placeholder="Enter budget amount"
+                    min="0"
+                    step="0.01"
+                    required
+                >
+                <span class="form-help">How much money do you want to allocate to this envelope?</span>
+            </div>
+            
+            <div class="form-actions">
+                <a href="{% url 'homepage' %}" class="btn btn-ghost">Cancel</a>
+                <button type="submit" class="btn btn-primary">
+                    ✓ Create Envelope
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Quick Tips -->
+    <div class="card slide-up stagger-1" style="margin-top: 2rem; background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);">
+        <h3 style="margin-bottom: 1rem;">💡 Envelope Tips</h3>
+        <ul style="color: var(--text-secondary); padding-left: 1.5rem;">
+            <li style="margin-bottom: 0.5rem;">Create separate envelopes for different spending categories</li>
+            <li style="margin-bottom: 0.5rem;">Set realistic budgets based on your income and expenses</li>
+            <li>Review and adjust your envelopes monthly for best results</li>
         </ul>
-    {% endif %}
-</body>
-
-</html>
+    </div>
+</div>
+{% endblock %}
