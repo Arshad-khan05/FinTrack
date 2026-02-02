@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from Envelopes.models import Envelope_Home
 from EnvelopeDescription.models import EnvelopeDescription
 from django.db.models import Sum
+from django.contrib.auth import update_session_auth_hash
 
 # Create your views here.
 def render_homepage(request):
@@ -170,3 +171,73 @@ def delete_user_account(request):
         return redirect('homepage')
 
     return render(request, 'confirm_delete_account.html', {})
+
+
+@login_required(login_url='login')
+def edit_profile(request):
+    user = request.user
+
+    if request.method == 'POST':
+        first_name = request.POST.get('firstname', '').strip()
+        last_name = request.POST.get('lastname', '').strip()
+
+        # Update name fields
+        if first_name:
+            user.first_name = first_name
+        if last_name:
+            user.last_name = last_name
+
+        # Handle password change if requested
+        new_password = request.POST.get('new_password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+        current_password = request.POST.get('current_password', '')
+
+        if new_password or confirm_password or current_password:
+            # require current password
+            if not current_password:
+                messages.error(request, "Current password is required to change your password.")
+                return redirect('edit_profile')
+
+            if not user.check_password(current_password):
+                messages.error(request, "Current password is incorrect.")
+                return redirect('edit_profile')
+
+            if not new_password or not confirm_password:
+                messages.error(request, "New password and confirmation are required.")
+                return redirect('edit_profile')
+
+            if new_password != confirm_password:
+                messages.error(request, "New passwords do not match.")
+                return redirect('edit_profile')
+
+            if len(new_password) < 6:
+                messages.error(request, "Password must be at least 6 characters long.")
+                return redirect('edit_profile')
+
+            try:
+                user.set_password(new_password)
+                user.save()
+                # keep user logged in after password change
+                update_session_auth_hash(request, user)
+                messages.success(request, "Profile updated and password changed successfully.")
+                return redirect('/')
+            except Exception:
+                messages.error(request, "An error occurred while changing password.")
+                return redirect('edit_profile')
+
+        # Save name changes if any
+        try:
+            user.save()
+            messages.success(request, "Profile updated successfully.")
+        except Exception:
+            messages.error(request, "An error occurred while updating profile.")
+
+        return redirect('/')
+
+    # GET: render form with current values
+    return render(request, 'edit_profile.html', {
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'email': user.email,
+        'username': user.username,
+    })

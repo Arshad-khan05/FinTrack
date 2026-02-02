@@ -52,6 +52,9 @@
                             <strong>{{ user.first_name }} {{ user.last_name }}</strong>
                         </div>
                         <div class="user-dropdown-divider"></div>
+                        <a href="{% url 'edit_profile' %}" class="user-dropdown-item">
+                            ⚙️ Edit Profile
+                        </a>
                         <a href="{% url 'delete_account' %}" class="user-dropdown-item">
                             🗑️ Delete Account
                         </a>
