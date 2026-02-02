@@ -9,6 +9,7 @@ from django.db.models import Sum
 from django.contrib.auth import update_session_auth_hash
 
 # Create your views here.
+@login_required(login_url='login')
 def render_homepage(request):
     if request.user.is_authenticated:
         # Get all envelopes for the user
