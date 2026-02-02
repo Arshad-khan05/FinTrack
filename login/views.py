@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from Envelopes.models import Envelope_Home
 from EnvelopeDescription.models import EnvelopeDescription
 from django.db.models import Sum
@@ -155,8 +156,17 @@ def logout_view(request):
 
 
 
+@login_required(login_url='login')
 def delete_user_account(request):
-    user = request.user
-    logout(request)
-    user.delete()
-    return redirect('homepage')
+    # Show a confirmation page on GET. Only delete on POST.
+    if request.method == 'POST':
+        user = request.user
+        logout(request)
+        try:
+            user.delete()
+            messages.success(request, "Account deleted successfully.")
+        except Exception:
+            messages.error(request, "An error occurred while deleting the account.")
+        return redirect('homepage')
+
+    return render(request, 'confirm_delete_account.html', {})
