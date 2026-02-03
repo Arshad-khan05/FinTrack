@@ -8,7 +8,7 @@
 <div class="envelope-list-header fade-in">
     <div>
         <h1>✏️ Manage Envelopes</h1>
-        <p style="color: var(--text-secondary);">Update or delete your budget envelopes</p>
+        <p class="text-secondary">Update or delete your budget envelopes</p>
     </div>
     <div class="envelope-controls">
         <div class="search-box">
@@ -40,17 +40,17 @@
             <tbody>
                 {% for envelope in envelopes %}
                 <tr data-envelope-name="{{ envelope.Envelope_Name }}">
-                    <td style="font-weight: 600;">{{ envelope.Envelope_Name }}</td>
+                    <td class="font-600">{{ envelope.Envelope_Name }}</td>
                     <td>₹{{ envelope.Money_Allocated|floatformat:2 }}</td>
                     <td>
                         <span class="{% if envelope.Money_Remaining > 0 %}badge badge-success{% else %}badge badge-danger{% endif %}">
                             ₹{{ envelope.Money_Remaining|floatformat:2 }}
                         </span>
                     </td>
-                    <td style="color: var(--error);">₹{{ envelope.Money_Spent|floatformat:2 }}</td>
+                    <td class="text-error">₹{{ envelope.Money_Spent|floatformat:2 }}</td>
                     <td>{{ envelope.Created_At|date:"M d, Y" }}</td>
                     <td>
-                        <div style="display: flex; gap: 0.5rem;">
+                        <div class="flex-gap">
                             <a href="update/{{ envelope.id }}/" class="btn btn-sm btn-ghost">
                                 ✏️ Edit
                             </a>
@@ -83,36 +83,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-    // Search functionality
-    document.addEventListener('DOMContentLoaded', () => {
-        const searchInput = document.getElementById('envelopeSearch');
-        const tableRows = document.querySelectorAll('tbody tr');
-        
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                
-                tableRows.forEach(row => {
-                    const envelopeName = row.dataset.envelopeName.toLowerCase();
-                    if (envelopeName.includes(searchTerm)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-            });
-        }
-    });
-    
-    // Confirm delete function
-    function confirmDelete(envelopeName, deleteUrl) {
-        confirmAction(
-            `Are you sure you want to delete the "${envelopeName}" envelope? This action cannot be undone.`,
-            () => {
-                window.location.href = deleteUrl;
-            }
-        );
-    }
-</script>
+    <script src="{% static 'js/updateenvelope.js' %}"></script>
 {% endblock %}

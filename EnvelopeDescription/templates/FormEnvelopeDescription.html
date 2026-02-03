@@ -8,7 +8,7 @@
     <!-- Form Header -->
     <div class="form-header">
         <h1>💸 Record New Expense</h1>
-        <p style="color: var(--text-secondary);">Track your spending by adding expense details</p>
+        <p class="text-secondary">Track your spending by adding expense details</p>
     </div>
     
     <!-- Form Card -->
@@ -53,10 +53,10 @@
             
             <!-- Overflow Warning -->
             {% if show_overflow_confirm %}
-            <div class="card" style="margin-bottom: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%); border: 2px solid var(--warning);">
-                <h3 style="color: var(--warning); margin-bottom: 1rem;">⚠️ Warning</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 0;">
-                    This transaction will make your remaining balance negative (<strong style="color: var(--error);">{{ projected_remaining }}</strong>). 
+            <div class="card accent-gradient-warning">
+                <h3 class="mb-1rem warning-title">⚠️ Warning</h3>
+                <p class="text-secondary mb-0">
+                    This transaction will make your remaining balance negative (<strong class="text-error">{{ projected_remaining }}</strong>). 
                     Do you want to continue anyway?
                 </p>
             </div>
@@ -81,11 +81,11 @@
     </div>
     
     <!-- Quick Tips -->
-    <div class="card slide-up stagger-1" style="margin-top: 2rem; background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);">
-        <h3 style="margin-bottom: 1rem;">💡 Expense Tips</h3>
-        <ul style="color: var(--text-secondary); padding-left: 1.5rem;">
-            <li style="margin-bottom: 0.5rem;">Add detailed descriptions to track where your money goes</li>
-            <li style="margin-bottom: 0.5rem;">Record expenses immediately to maintain accuracy</li>
+    <div class="card accent-gradient-purple">
+        <h3 class="mb-1rem">💡 Expense Tips</h3>
+        <ul class="text-secondary list-indent">
+            <li class="mb-sm">Add detailed descriptions to track where your money goes</li>
+            <li class="mb-sm">Record expenses immediately to maintain accuracy</li>
             <li>Review your spending regularly to identify patterns</li>
         </ul>
     </div>

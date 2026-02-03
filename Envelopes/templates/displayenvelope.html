@@ -8,7 +8,7 @@
 <div class="envelope-list-header fade-in">
     <div>
         <h1>Your Envelopes</h1>
-        <p style="color: var(--text-secondary);">Track all your budget envelopes in one place</p>
+        <p class="text-secondary">Track all your budget envelopes in one place</p>
     </div>
     <div class="envelope-controls">
         <div class="search-box">
@@ -41,7 +41,7 @@
                 ₹{{ envelope.Money_Remaining|floatformat:2 }}
             </div>
             
-            <div class="envelope-progress">
+                <div class="envelope-progress">
                 {% widthratio envelope.Money_Spent envelope.Money_Allocated 100 as spent_percentage %}
                 <div class="progress">
                     <div class="progress-bar" style="width: {{ spent_percentage }}%"></div>
@@ -55,11 +55,11 @@
                 </div>
                 <div class="envelope-stat">
                     <span class="envelope-stat-label">Spent</span>
-                    <span class="envelope-stat-value" style="color: var(--error);">₹{{ envelope.Money_Spent|floatformat:2 }}</span>
+                    <span class="envelope-stat-value text-error">₹{{ envelope.Money_Spent|floatformat:2 }}</span>
                 </div>
             </div>
             
-            <div class="card-footer" style="margin-top: 1rem; font-size: 0.75rem; color: var(--text-muted);">
+            <div class="card-footer card-footer-meta">
                 Created: {{ envelope.Created_At|date:"M d, Y" }}
             </div>
         </div>
@@ -81,36 +81,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-    // Search functionality
-    document.addEventListener('DOMContentLoaded', () => {
-        const searchInput = document.getElementById('envelopeSearch');
-        const envelopeCards = document.querySelectorAll('.envelope-card');
-        
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                
-                envelopeCards.forEach(card => {
-                    const envelopeName = card.dataset.envelopeName.toLowerCase();
-                    if (envelopeName.includes(searchTerm)) {
-                        card.style.display = '';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
-        }
-        
-        // Animate progress bars
-        const progressBars = document.querySelectorAll('.progress-bar');
-        progressBars.forEach(bar => {
-            const width = bar.style.width;
-            bar.style.width = '0';
-            setTimeout(() => {
-                bar.style.width = width;
-            }, 300);
-        });
-    });
-</script>
+    <script src="{% static 'js/displayenvelope.js' %}"></script>
 {% endblock %}

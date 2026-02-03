@@ -8,24 +8,24 @@
     <!-- Form Header -->
     <div class="form-header">
         <h1>✏️ Update Envelope</h1>
-        <p style="color: var(--text-secondary);">Modify details for <strong>{{ envelope.Envelope_Name }}</strong></p>
+        <p class="text-secondary">Modify details for <strong>{{ envelope.Envelope_Name }}</strong></p>
     </div>
     
     <!-- Current Status Card -->
-    <div class="card slide-up" style="margin-bottom: 2rem; background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);">
-        <h3 style="margin-bottom: 1rem;">📊 Current Status</h3>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+    <div class="card slide-up accent-gradient-purple">
+        <h3 class="mb-1rem">📊 Current Status</h3>
+        <div class="status-grid">
             <div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem;">Allocated</div>
-                <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-light);">₹{{ envelope.Money_Allocated|floatformat:2 }}</div>
+                <div class="small-uppercase">Allocated</div>
+                <div class="stat-value stat-value--primary-light">₹{{ envelope.Money_Allocated|floatformat:2 }}</div>
             </div>
             <div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem;">Spent</div>
-                <div style="font-size: 1.25rem; font-weight: 700; color: var(--error);">₹{{ envelope.Money_Spent|floatformat:2 }}</div>
+                <div class="small-uppercase">Spent</div>
+                <div class="stat-value stat-value--error">₹{{ envelope.Money_Spent|floatformat:2 }}</div>
             </div>
             <div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem;">Remaining</div>
-                <div style="font-size: 1.25rem; font-weight: 700; color: var(--success);">₹{{ envelope.Money_Remaining|floatformat:2 }}</div>
+                <div class="small-uppercase">Remaining</div>
+                <div class="stat-value stat-value--success">₹{{ envelope.Money_Remaining|floatformat:2 }}</div>
             </div>
         </div>
     </div>
@@ -90,22 +90,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-    // Calculate and display remaining amount in real-time
-    document.addEventListener('DOMContentLoaded', () => {
-        const budgetInput = document.getElementById('budget');
-        const spentInput = document.getElementById('spend');
-        
-        function calculateRemaining() {
-            const budget = parseFloat(budgetInput.value) || 0;
-            const spent = parseFloat(spentInput.value) || 0;
-            const remaining = budget - spent;
-            
-            // You could add a live preview here if needed
-        }
-        
-        budgetInput.addEventListener('input', calculateRemaining);
-        spentInput.addEventListener('input', calculateRemaining);
-    });
-</script>
+    <script src="{% static 'js/updateenvelopeform.js' %}"></script>
 {% endblock %}

@@ -1,0 +1,48 @@
+/* Auth-related small overrides moved from templates */
+
+.auth-form .btn-primary,
+.auth-form .btn-success {
+    width: 100%;
+}
+
+.auth-note {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.info-card {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+    text-align: center;
+}
+
+.info-label {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.info-username {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--success);
+    margin: 0;
+}
+
+/* Checkbox / terms styling moved from inline styles */
+.auth-form input[type="checkbox"] {
+    margin-top: 5px;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+.auth-form .form-group > div {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: flex-start;
+}
+
+/* HR spacing fallback */
+.auth-form hr {
+    margin: var(--spacing-md) 0;
+}

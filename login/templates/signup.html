@@ -92,22 +92,21 @@
             </div>
             
             <!-- Terms and Conditions Checkbox -->
-            <div class="form-group" style="margin-top: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
-                <div style="display: flex; gap: var(--spacing-sm); align-items: flex-start;">
+            <div class="form-group">
+                <div>
                     <input 
                         type="checkbox" 
                         id="terms" 
                         name="terms" 
                         required
-                        style="margin-top: 5px; cursor: pointer; accent-color: var(--primary);"
                     >
-                    <label for="terms" style="cursor: pointer; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5;">
+                    <label for="terms">
                         I agree to the terms and conditions. My data will be securely stored and can be viewed by administrators only for account management purposes. My data will not be misused or shared with third parties.
                     </label>
                 </div>
             </div>
             
-            <button type="submit" class="btn btn-primary" style="width: 100%;">
+            <button type="submit" class="btn btn-primary">
                 🚀 Create Account
             </button>
         </form>
@@ -118,36 +117,12 @@
                 Already have an account? 
                 <a href="{% url 'login' %}">Login here</a>
             </p>
-            <p style="margin-top: var(--spacing-md); font-size: 0.9rem; color: var(--text-muted);">
-                Need help? <a href="mailto:arshad.feedback@gmail.com" style="color: var(--primary); text-decoration: none;">Contact us</a>
-            </p>
+            <p class="help auth-footer help">Need help? <a href="mailto:arshad.feedback@gmail.com" class="primary-link">Contact us</a></p>
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<script>
-    // Password matching validation
-    document.addEventListener('DOMContentLoaded', () => {
-        const password = document.getElementById('password');
-        const confirmPassword = document.getElementById('confirm-password');
-        
-        confirmPassword.addEventListener('input', () => {
-            if (password.value !== confirmPassword.value) {
-                confirmPassword.setCustomValidity('Passwords do not match');
-            } else {
-                confirmPassword.setCustomValidity('');
-            }
-        });
-        
-        password.addEventListener('input', () => {
-            if (confirmPassword.value && password.value !== confirmPassword.value) {
-                confirmPassword.setCustomValidity('Passwords do not match');
-            } else {
-                confirmPassword.setCustomValidity('');
-            }
-        });
-    });
-</script>
+    <script src="{% static 'js/signup.js' %}"></script>
 {% endblock %}

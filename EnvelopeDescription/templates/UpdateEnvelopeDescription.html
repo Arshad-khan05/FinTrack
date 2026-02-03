@@ -8,7 +8,7 @@
     <!-- Form Header -->
     <div class="form-header">
         <h1>✏️ Update Expense</h1>
-        <p style="color: var(--text-secondary);">Modify the details of this expense</p>
+        <p class="text-secondary">Modify the details of this expense</p>
     </div>
     
     <!-- Form Card -->
@@ -30,7 +30,6 @@
                         class="form-input" 
                         value="{{ desc.EnvelopeName.Envelope_Name }}" 
                         disabled
-                        style="background-color: var(--bg-secondary); cursor: not-allowed;"
                     >
                     <input type="hidden" name="{{ field.name }}" value="{{ field.value }}">
                 {% elif field.field.widget.input_type == 'select' %}
@@ -65,10 +64,10 @@
             
             <!-- Overflow Warning -->
             {% if show_overflow_confirm %}
-            <div class="card" style="margin-bottom: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%); border: 2px solid var(--warning);">
-                <h3 style="color: var(--warning); margin-bottom: 1rem;">⚠️ Warning</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 0;">
-                    This update will make your remaining balance negative (<strong style="color: var(--error);">{{ projected_remaining }}</strong>). 
+            <div class="card accent-gradient-warning">
+                <h3 class="mb-1rem warning-title">⚠️ Warning</h3>
+                <p class="text-secondary mb-0">
+                    This update will make your remaining balance negative (<strong class="text-error">{{ projected_remaining }}</strong>). 
                     Do you want to continue anyway?
                 </p>
             </div>

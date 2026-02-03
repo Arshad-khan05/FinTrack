@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="{% static 'css/components.css' %}">
     <link rel="stylesheet" href="{% static 'css/animations.css' %}">
     <link rel="stylesheet" href="{% static 'css/pages.css' %}">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'css/inlines.css' %}">
     
     <!-- Chart.js CDN for data visualizations -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
@@ -28,7 +30,7 @@
     <nav class="navbar slide-down">
         <div class="navbar-container">
             <a href="/" class="navbar-brand">
-                <span style="font-size: 1.5rem;">💰</span>
+                <span>💰</span>
                 FinTrack
             </a>
             
@@ -48,7 +50,7 @@
                         {{ user.first_name|slice:":1"|upper }}
                     </div>
                     <div class="user-dropdown">
-                        <div class="user-dropdown-item" style="cursor: default;">
+                        <div class="user-dropdown-item">
                             <strong>{{ user.first_name }} {{ user.last_name }}</strong>
                         </div>
                         <div class="user-dropdown-divider"></div>
@@ -70,7 +72,7 @@
     
     <!-- Django Messages Container (will be converted to toasts by JavaScript) -->
     {% if messages %}
-    <ul class="messages" style="display: none;">
+    <ul class="messages">
         {% for message in messages %}
             <li class="{{ message.tags }}">{{ message }}</li>
         {% endfor %}
@@ -89,8 +91,7 @@
         <div class="container">
             <div class="footer-content">
                 <p>
-                    Made with <span style="color: var(--error); animation: pulse 1.5s infinite;">❤️</span> 
-                    | FinTrack &copy; 2026 | Your Smart Budget Companion
+                    Made with <span class="heart">❤️</span> | FinTrack &copy; 2026 | Your Smart Budget Companion
                 </p>
             </div>
         </div>

@@ -66,9 +66,9 @@
 </div>
 
 <!-- Optional: Tips Section -->
-<div class="card slide-up stagger-3" style="margin-top: 3rem; text-align: center; background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);">
-    <h3 style="margin-bottom: 1rem;">💡 Pro Tip</h3>
-    <p style="color: var(--text-secondary);">
+<div class="card pro-tip-card">
+    <h3 class="pro-tip-title">💡 Pro Tip</h3>
+    <p class="text-secondary">
         Review your envelopes regularly and adjust allocations based on your spending patterns. 
         The envelope system works best when you stick to your budget!
     </p>
@@ -77,13 +77,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-    // Add stagger animation to action cards
-    document.addEventListener('DOMContentLoaded', () => {
-        const cards = document.querySelectorAll('.action-card');
-        cards.forEach((card, index) => {
-            card.style.animationDelay = (index * 0.1) + 's';
-        });
-    });
-</script>
+    <script src="{% static 'js/index.js' %}"></script>
 {% endblock %}

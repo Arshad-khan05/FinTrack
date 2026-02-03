@@ -8,7 +8,7 @@
 <div class="envelope-list-header fade-in">
     <div>
         <h1>Expense Details</h1>
-        <p style="color: var(--text-secondary);">View all your expenses grouped by envelope</p>
+        <p class="text-secondary">View all your expenses grouped by envelope</p>
     </div>
     <div class="envelope-controls">
         <div class="search-box">
@@ -32,12 +32,12 @@
         {% for envelope_name, data in Descriptions.items %}
         <div class="expense-group" data-envelope-name="{{ envelope_name }}">
             <!-- Expense Group Header -->
-            <div class="expense-group-header" onclick="toggleGroup(this)">
+                <div class="expense-group-header" onclick="toggleGroup(this)">
                 <div class="expense-group-title">
-                    <span style="font-size: 1.5rem;">📁</span>
+                    <span class="expense-icon">📁</span>
                     <div>
                         <div class="expense-group-name">{{ data.Envelope }}</div>
-                        <div style="font-size: 0.875rem; color: var(--text-muted);">
+                        <div class="muted-small">
                             {% if data.Description %}
                                 {{ data.Description|length }} expense{{ data.Description|length|pluralize }}
                             {% else %}
@@ -47,13 +47,13 @@
                     </div>
                 </div>
                 <div>
-                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-right: 1rem;">Toggle</span>
+                    <span class="toggle-text">Toggle</span>
                     <span class="toggle-icon">▼</span>
                 </div>
             </div>
             
             <!-- Expense Items -->
-            <div class="expense-items" style="display: none;">
+            <div class="expense-items">
                 {% if data.Description %}
                     {% for desc in data.Description %}
                     <div class="expense-item">
@@ -72,7 +72,7 @@
                             <a href="{% url 'envelopedescription_update' desc.id %}" class="btn btn-sm btn-ghost">
                                 ✏️ Edit
                             </a>
-                            <form action="{% url 'envelopedescription_delete' desc.id %}" method="post" style="display: inline;">
+                            <form action="{% url 'envelopedescription_delete' desc.id %}" method="post" class="form-inline">
                                 {% csrf_token %}
                                 <button type="button" onclick="confirmDeleteExpense(this, '{{ desc.Description }}')" class="btn btn-sm btn-danger">
                                     🗑️ Delete
@@ -82,8 +82,8 @@
                     </div>
                     {% endfor %}
                 {% else %}
-                    <div class="empty-state" style="padding: 2rem;">
-                        <p style="color: var(--text-muted); margin: 0;">No expenses recorded yet</p>
+                    <div class="empty-state empty-padding">
+                        <p class="text-muted mb-0">No expenses recorded yet</p>
                     </div>
                 {% endif %}
             </div>
@@ -106,68 +106,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-    // Toggle expense group
-    function toggleGroup(header) {
-        const items = header.nextElementSibling;
-        const icon = header.querySelector('.toggle-icon');
-        
-        if (items.style.display === 'none' || items.style.display === '') {
-            items.style.display = 'flex';
-            icon.textContent = '▲';
-            items.classList.add('fade-in');
-        } else {
-            items.style.display = 'none';
-            icon.textContent = '▼';
-        }
-    }
-    
-    // Expand all groups by default
-    document.addEventListener('DOMContentLoaded', () => {
-        const headers = document.querySelectorAll('.expense-group-header');
-        headers.forEach(header => {
-            toggleGroup(header);
-        });
-    });
-    
-    // Search functionality
-    document.addEventListener('DOMContentLoaded', () => {
-        const searchInput = document.getElementById('expenseSearch');
-        const expenseGroups = document.querySelectorAll('.expense-group');
-        
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                
-                expenseGroups.forEach(group => {
-                    const envelopeName = group.dataset.envelopeName.toLowerCase();
-                    const expenseItems = group.querySelectorAll('.expense-item');
-                    let hasMatch = false;
-                    
-                    expenseItems.forEach(item => {
-                        const text = item.textContent.toLowerCase();
-                        if (text.includes(searchTerm) || envelopeName.includes(searchTerm)) {
-                            item.style.display = '';
-                            hasMatch = true;
-                        } else {
-                            item.style.display = 'none';
-                        }
-                    });
-                    
-                    group.style.display = hasMatch || envelopeName.includes(searchTerm) ? '' : 'none';
-                });
-            });
-        }
-    });
-    
-    // Confirm delete function
-    function confirmDeleteExpense(button, description) {
-        confirmAction(
-            `Are you sure you want to delete the expense "${description}"? This action cannot be undone.`,
-            () => {
-                button.closest('form').submit();
-            }
-        );
-    }
-</script>
+    <script src="{% static 'js/envelope_descriptions.js' %}"></script>
 {% endblock %}
