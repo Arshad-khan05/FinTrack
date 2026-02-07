@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Income - FinTrack{% endblock %}
+
+{% block content %}
+<div class="form-container fade-in">
+    <div class="form-header">
+        <h1>✏️ Edit Income Source</h1>
+        <p class="text-secondary">Update the name of this income source</p>
+    </div>
+    <div class="card form-card slide-up">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">Name</label>
+                <input type="text" name="name" class="form-input" value="{{ income.IncomeName }}" required autofocus>
+            </div>
+            <div class="form-actions">
+                <a href="{% url 'update_income' %}" class="btn btn-ghost">Cancel</a>
+                <button type="submit" class="btn btn-primary">✓ Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

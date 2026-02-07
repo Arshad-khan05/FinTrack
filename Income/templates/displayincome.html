@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Your Income Sources - FinTrack{% endblock %}
+
+{% block content %}
+<div class="envelope-list-header fade-in">
+    <div>
+        <h1>Your Income Sources</h1>
+        <p class="text-secondary">Manage your income sources</p>
+    </div>
+    <div class="envelope-controls">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Search incomes..." id="incomeSourceSearch">
+        </div>
+        <a href="{% url 'add_income' %}" class="btn btn-primary">➕ Add Income</a>
+    </div>
+</div>
+
+{% if incomes %}
+    <div class="envelope-grid slide-up">
+        {% for inc in incomes %}
+        <div class="card envelope-card hover-lift" data-envelope-name="{{ inc.IncomeName }}">
+            <div class="envelope-card-header">
+                <div class="envelope-name">📁 {{ inc.IncomeName }}</div>
+            </div>
+            <div class="envelope-amount">₹{{ inc.Total_Amount|floatformat:2 }}</div>
+            <div class="envelope-details">
+                <div class="envelope-stat">
+                    <span class="envelope-stat-label">Created</span>
+                    <span class="envelope-stat-value">{{ inc.Created_At|date:"M d, Y" }}</span>
+                </div>
+            </div>
+            <div class="card-footer card-footer-meta">
+                <a href="{% url 'edit_income' inc.id %}" class="btn btn-sm btn-ghost">✏️ Edit</a>
+                <form action="{% url 'delete_income' inc.id %}" method="post" class="form-inline" style="display:inline">
+                    {% csrf_token %}
+                    <button type="button" onclick="confirmDeleteIncome(this, '{{ inc.IncomeName|escapejs }}')" class="btn btn-sm btn-danger">🗑️ Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state scale-in">
+        <div class="empty-icon">📭</div>
+        <h2 class="empty-title">No Income Sources Yet</h2>
+        <p class="empty-description">Add sources of income so you can track totals</p>
+        <a href="{% url 'add_income' %}" class="btn btn-primary">➕ Create Your First Income</a>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/income_descriptions.js' %}"></script>
+{% endblock %}
