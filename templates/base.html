@@ -18,6 +18,9 @@
     <link rel="stylesheet" href="{% static 'css/pages.css' %}">
     <link rel="stylesheet" href="{% static 'css/auth.css' %}">
     <link rel="stylesheet" href="{% static 'css/inlines.css' %}">
+    <!-- Favicons / App icons (all pointing to logo.ico) -->
+    <link rel="icon" href="{% static 'img/logo.ico' %}" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/logo.ico' %}">
     
     <!-- Chart.js CDN for data visualizations -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
@@ -29,9 +32,8 @@
     {% if user.is_authenticated %}
     <nav class="navbar slide-down">
         <div class="navbar-container">
-            <a href="/" class="navbar-brand">
-                <span>💰</span>
-                FinTrack
+            <a href="/" class="navbar-brand" aria-label="FinTrack home">
+                <img src="{% static 'img/logo.ico' %}" alt="FinTrack" class="navbar-logo">
             </a>
             
             <button class="navbar-toggle" aria-label="Toggle menu">
