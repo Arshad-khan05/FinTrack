@@ -6,6 +6,7 @@ from django.conf import settings
 from datetime import timedelta
 from Envelopes.models import Envelope_Home
 from EnvelopeDescription.models import EnvelopeDescription
+from Income.models import Income_Table, Income_Description
 
 
 class Command(BaseCommand):
@@ -162,6 +163,20 @@ class Command(BaseCommand):
                     </thead>
                     <tbody>
         """
+
+        # Get income entries for the month
+        incomes = Income_Description.objects.filter(
+            username=user,
+            created_at__month=month,
+            created_at__year=year
+        ).order_by('IncomeName', 'created_at')
+
+        # Build income summary data
+        income_groups = {}
+        for inc in incomes:
+            key = inc.IncomeName.IncomeName
+            income_groups.setdefault(key, []).append(inc)
+
         
         # Add envelope rows
         for env in envelope_data:
@@ -246,6 +261,27 @@ class Command(BaseCommand):
                 </div>
             """
         
+        # Income section
+        if incomes.exists():
+            html += f"""
+                <h2>💵 Income Summary ({incomes.count()} items)</h2>
+            """
+            for name, items in income_groups.items():
+                html += f"""
+                    <div class=\"transaction-group\">\n                        <h4>📁 {name}</h4>\n                """
+                for it in items:
+                    date_str = it.created_at.strftime("%b %d, %Y at %I:%M %p")
+                    html += f"""
+                        <div class=\"transaction-item\">\n                            <div class=\"transaction-date\">📅 {date_str}</div>\n                            <div class=\"transaction-desc\"><strong>Description:</strong> {it.Description}</div>\n                            <div class=\"transaction-amount\">➕ Amount: ₹{it.Amount}</div>\n                        </div>\n                    """
+                html += "</div>"
+        else:
+            html += """
+                <div class="summary-box">
+                    <strong>ℹ️ No Income Records</strong><br/>
+                    No incomes recorded for this month.
+                </div>
+            """
+
         html += """
                 <div class="footer">
                     <p><strong>FinTrack</strong> - Your Personal Expense Tracker</p>

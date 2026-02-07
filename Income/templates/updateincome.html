@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage Income Sources - FinTrack{% endblock %}
+
+{% block content %}
+<div class="envelope-list-header fade-in">
+    <div>
+        <h1>Manage Income Sources</h1>
+        <p class="text-secondary">Edit or remove your income sources</p>
+    </div>
+    <div class="envelope-controls">
+        <a href="{% url 'add_income' %}" class="btn btn-primary">➕ Add Income</a>
+    </div>
+</div>
+
+<div class="slide-up">
+    <div class="envelope-grid slide-up">
+        {% for inc in incomes %}
+        <div class="card envelope-card hover-lift" data-envelope-name="{{ inc.IncomeName }}">
+            <div class="envelope-card-header">
+                <div class="envelope-name">📁 {{ inc.IncomeName }}</div>
+            </div>
+            <div class="envelope-amount">₹{{ inc.Total_Amount|floatformat:2 }}</div>
+            <div class="envelope-details">
+                <div class="envelope-stat">
+                    <span class="envelope-stat-label">Created</span>
+                    <span class="envelope-stat-value">{{ inc.Created_At|date:"M d, Y" }}</span>
+                </div>
+            </div>
+            <div class="card-footer card-footer-meta">
+                <a href="{% url 'edit_income' inc.id %}" class="btn btn-sm btn-ghost">✏️ Edit</a>
+                <form action="{% url 'delete_income' inc.id %}" method="post" class="form-inline" style="display:inline">
+                    {% csrf_token %}
+                    <button type="button" onclick="confirmDeleteIncome(this, '{{ inc.IncomeName|escapejs }}')" class="btn btn-sm btn-danger">🗑️ Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

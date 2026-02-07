@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Income Entry - FinTrack{% endblock %}
+
+{% block content %}
+<div class="form-container fade-in">
+    <!-- Form Header -->
+    <div class="form-header">
+        <h1>💳 Add Income Entry</h1>
+        <p class="text-secondary">Record income received from a source</p>
+    </div>
+    
+    <!-- Form Card -->
+    <div class="card form-card slide-up">
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Render Django form fields with custom styling -->
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                    {{ field.label }}
+                </label>
+                
+                {% if field.field.widget.input_type == 'select' %}
+                    {{ field }}
+                {% elif field.field.widget.input_type == 'textarea' %}
+                    <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-textarea" {% if field.field.required %}required{% endif %}>{{ field.value|default:'' }}</textarea>
+                {% else %}
+                    <input 
+                        type="{{ field.field.widget.input_type }}" 
+                        name="{{ field.name }}" 
+                        id="{{ field.id_for_label }}" 
+                        class="form-input"
+                        value="{{ field.value|default:'' }}"
+                        {% if field.field.required %}required{% endif %}
+                        {% if field.name == 'Amount' %}step="0.01" min="0"{% endif %}
+                    >
+                {% endif %}
+                
+                {% if field.help_text %}
+                    <span class="form-help">{{ field.help_text }}</span>
+                {% endif %}
+                
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <span class="form-error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <div class="form-actions">
+                <a href="{% url 'display_income_descriptions' %}" class="btn btn-ghost">Cancel</a>
+                <button type="submit" class="btn btn-primary">
+                    ✓ Record Income
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Quick Tips -->
+    <div class="card accent-gradient-purple">
+        <h3 class="mb-1rem">💡 Income Tips</h3>
+        <ul class="text-secondary list-indent">
+            <li class="mb-sm">Add detailed descriptions to track your income sources</li>
+            <li class="mb-sm">Record income immediately when received</li>
+            <li>Review your income regularly to understand your earning patterns</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+

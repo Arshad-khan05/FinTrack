@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Income - FinTrack{% endblock %}
+
+{% block content %}
+<div class="form-container fade-in">
+    <div class="form-header">
+        <h1>➕ Add Income Source</h1>
+        <p class="text-secondary">Create a new income source</p>
+    </div>
+    <div class="card form-card slide-up">
+        <form method="post" autocomplete="off">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="income_name" class="form-label">Income Name</label>
+                <input id="income_name" name="income_name" class="form-input" type="text" placeholder="e.g., Salary, Freelance" required autofocus>
+            </div>
+            <div class="form-actions">
+                <a href="{% url 'display_incomes' %}" class="btn btn-ghost">Cancel</a>
+                <button type="submit" class="btn btn-primary">✓ Create Income</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

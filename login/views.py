@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from Envelopes.models import Envelope_Home
 from EnvelopeDescription.models import EnvelopeDescription
 from django.db.models import Sum
+from Income.models import Income_Table, Income_Description
 from django.contrib.auth import update_session_auth_hash
 
 # Create your views here.
@@ -20,12 +21,17 @@ def render_homepage(request):
         total_spent = envelopes.aggregate(Sum('Money_Spent'))['Money_Spent__sum'] or 0
         total_remaining = total_allocated - total_spent
         total_envelopes = envelopes.count()
+        # Income totals
+        total_income = Income_Description.objects.filter(username=request.user).aggregate(Sum('Amount'))['Amount__sum'] or 0
+        total_income_sources = Income_Table.objects.filter(username=request.user).count()
         
         context = {
             'total_allocated': total_allocated,
             'total_spent': total_spent,
             'total_remaining': total_remaining,
             'total_envelopes': total_envelopes,
+            'total_income': total_income,
+            'total_income_sources': total_income_sources,
         }
         return render(request, 'index.html', context)
     return render(request, 'index.html')

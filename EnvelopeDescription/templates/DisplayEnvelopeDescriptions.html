@@ -58,25 +58,18 @@
                     {% for desc in data.Description %}
                     <div class="expense-item">
                         <div class="expense-item-info">
-                            <div class="expense-item-name">
-                                📝 {{ desc.Description }}
-                            </div>
-                            <div class="expense-item-date">
-                                📅 {{ desc.Date|date:"M d, Y" }}
-                            </div>
+                            <div class="expense-item-name">📝 {{ desc.Description }}</div>
+                            <div class="expense-item-date">📅 {{ desc.Date|date:"M d, Y" }}</div>
                         </div>
                         <div class="expense-item-amount">
-                            ₹{{ desc.Money_Spent|floatformat:2 }}
+                            <div>₹{{ desc.Money_Spent|floatformat:2 }}</div>
+                            <div class="muted-small">Remaining: ₹{{ desc.Money_Remaining|floatformat:2 }}</div>
                         </div>
                         <div class="expense-item-actions">
-                            <a href="{% url 'envelopedescription_update' desc.id %}" class="btn btn-sm btn-ghost">
-                                ✏️ Edit
-                            </a>
+                            <a href="{% url 'envelopedescription_update' desc.id %}" class="btn btn-sm btn-ghost">✏️ Edit</a>
                             <form action="{% url 'envelopedescription_delete' desc.id %}" method="post" class="form-inline">
                                 {% csrf_token %}
-                                <button type="button" onclick="confirmDeleteExpense(this, '{{ desc.Description }}')" class="btn btn-sm btn-danger">
-                                    🗑️ Delete
-                                </button>
+                                <button type="button" onclick="confirmDeleteExpense(this, '{{ desc.Description }}')" class="btn btn-sm btn-danger">🗑️ Delete</button>
                             </form>
                         </div>
                     </div>

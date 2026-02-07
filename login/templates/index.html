@@ -36,6 +36,16 @@
         <div class="stat-value count-up" data-value="{{ total_envelopes }}">{{ total_envelopes }}</div>
         <div class="stat-label">Active Envelopes</div>
     </div>
+    <div class="card stat-card hover-lift">
+        <div class="stat-icon">🪙</div>
+        <div class="stat-value count-up" data-value="{{ total_income|floatformat:0 }}">{{ total_income }}</div>
+        <div class="stat-label">Total Income</div>
+    </div>
+    <div class="card stat-card hover-lift">
+        <div class="stat-icon">🔢</div>
+        <div class="stat-value count-up" data-value="{{ total_income_sources }}">{{ total_income_sources }}</div>
+        <div class="stat-label">Income Sources</div>
+    </div>
 </div>
 
 <!-- Quick Actions -->
@@ -62,6 +72,34 @@
         <div class="card-icon">📈</div>
         <h3>Expense Details</h3>
         <p>View detailed spending breakdown by envelope</p>
+    </a>
+</div>
+
+<!-- Income Quick Actions (separated) -->
+<div class="dashboard-separator" style="height:1rem"></div>
+<div class="dashboard-actions slide-up stagger-2">
+    <a href="{% url 'add_income' %}" class="card action-card icon-card hover-lift">
+        <div class="card-icon">🪙</div>
+        <h3>Add Income Source</h3>
+        <p>Create a new income source to track earnings</p>
+    </a>
+    
+    <a href="{% url 'update_income' %}" class="card action-card icon-card hover-lift">
+        <div class="card-icon">✏️</div>
+        <h3>Manage Income</h3>
+        <p>Edit or remove your income sources</p>
+    </a>
+    
+    <a href="{% url 'add_income_description' %}" class="card action-card icon-card hover-lift">
+        <div class="card-icon">💳</div>
+        <h3>Add Income Entry</h3>
+        <p>Record income received from a source</p>
+    </a>
+    
+    <a href="{% url 'display_income_descriptions' %}" class="card action-card icon-card hover-lift">
+        <div class="card-icon">💹</div>
+        <h3>Income Details</h3>
+        <p>View detailed income breakdown by source</p>
     </a>
 </div>
 

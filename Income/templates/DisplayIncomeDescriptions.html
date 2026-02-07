@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Income Details - FinTrack{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="envelope-list-header fade-in">
+    <div>
+        <h1>Income Details</h1>
+        <p class="text-secondary">View your income entries grouped by source</p>
+    </div>
+    <div class="envelope-controls">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input 
+                type="text" 
+                class="search-input" 
+                placeholder="Search incomes..."
+                id="incomeSearch"
+            >
+        </div>
+        <a href="{% url 'add_income_description' %}" class="btn btn-primary">
+            ➕ Add Income Entry
+        </a>
+    </div>
+</div>
+
+{% if Descriptions %}
+    <div class="slide-up">
+        {% for income_name, data in Descriptions.items %}
+        <div class="expense-group" data-envelope-name="{{ income_name }}">
+            <div class="expense-group-header" onclick="toggleGroup(this)">
+                <div class="expense-group-title">
+                    <span class="expense-icon">📁</span>
+                    <div>
+                        <div class="expense-group-name">{{ data.Income }}</div>
+                        <div class="muted-small">
+                            {% if data.Descriptions %}
+                                {{ data.Descriptions|length }} entry{{ data.Descriptions|length|pluralize }} • Total: ₹{{ data.Total|floatformat:2 }}
+                            {% else %}
+                                No entries • Total: ₹{{ data.Total|floatformat:2 }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <span class="toggle-text">Toggle</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="expense-items">
+                {% if data.Descriptions %}
+                    {% for desc in data.Descriptions %}
+                    <div class="expense-item">
+                        <div class="expense-item-info">
+                            <div class="expense-item-name">📝 {{ desc.Description }}</div>
+                            <div class="expense-item-date">📅 {{ desc.Date|date:"M d, Y" }}</div>
+                        </div>
+                        <div class="expense-item-amount">
+                            <div>₹{{ desc.Amount|floatformat:2 }}</div>
+                            <div class="muted-small">Total: ₹{{ data.Total|floatformat:2 }}</div>
+                        </div>
+                        <div class="expense-item-actions">
+                            <a href="{% url 'update_income_description' desc.id %}" class="btn btn-sm btn-ghost">✏️ Edit</a>
+                            <form action="{% url 'delete_income_description' desc.id %}" method="post" class="form-inline">
+                                {% csrf_token %}
+                                <button type="button" onclick="confirmDeleteIncome(this, '{{ desc.Description|escapejs }}')" class="btn btn-sm btn-danger">🗑️ Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state empty-padding">
+                        <p class="text-muted mb-0">No income entries yet</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state scale-in">
+        <div class="empty-icon">📊</div>
+        <h2 class="empty-title">No Income Yet</h2>
+        <p class="empty-description">Start tracking income by adding your first income entry!</p>
+        <a href="{% url 'add_income_description' %}" class="btn btn-primary">➕ Add Income Entry</a>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/income_descriptions.js' %}"></script>
+{% endblock %}
